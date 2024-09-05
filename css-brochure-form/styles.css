@@ -1,0 +1,65 @@
+h2.title {
+  color: rgb(236, 92, 87);
+  font-family: AtlasGrotesk, sans-serif;
+  font-weight: bold;
+  text-align: center;
+}
+
+div {
+  width: 550px;
+  margin: auto;
+}
+
+label.question {
+  color: rgb(44, 44, 44);
+  font-family: 'Brandon Grotesque', sans-serif;
+  font-weight: bold;
+  padding-left: 10px;
+}
+
+div.question {
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+input.text-input {
+  border: 1px solid rgb(154, 154, 154);
+  border-radius: 7px;
+  height: 40px;
+  width: 550px;
+  padding: 10px;
+  font-size: 17px;
+  font-family: AtlasGrotesk, sans-serif;
+}
+
+input::placeholder {
+  color: rgb(154, 154, 154);
+}
+
+select {
+  border-color: rgb(154, 154, 154);
+  background-color: rgb(243, 243, 243);
+  color: rgb(44, 44, 44);
+  border-radius: 4px;
+  border-width: 1px;
+  height: 40px;
+  width: 550px;
+  padding-left: 10px;
+  font-size: 17px;
+  font-family: 'Brandon Grotesque', serif;
+}
+
+button.button {
+  color: white;
+  background-color: rgb(236, 92, 87);
+  border-width: 0;
+  border-radius: 20px;
+  font-size: 17px;
+  width: 100px;
+  height: 40px;
+  margin-top: 10px;
+}
+
+div.button {
+  padding-left: 450px;
+}
