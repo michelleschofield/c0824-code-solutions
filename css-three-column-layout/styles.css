@@ -1,0 +1,52 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.row {
+  display: flex;
+}
+
+.col-full {
+  width: 100%;
+}
+
+.col-fourth {
+  width: calc(100% / 4);
+}
+
+.center {
+  justify-content: center;
+}
+
+.image {
+  width: 100%;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.background {
+  background-color: rgb(26, 150, 217);
+  color: white;
+  text-align: center;
+  font-family: Lato, sans-serif;
+  padding: 5% 0;
+}
+
+.circle {
+  background-color: white;
+  border-radius: 50%;
+  width: calc(100% / 3);
+  padding: 7% 8%;
+}
+
+.text-blurb {
+  color: rgb(214, 218, 220);
+  padding: 0 10px;
+  font-size: small;
+  margin-top: 0;
+}
