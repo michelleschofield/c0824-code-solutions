@@ -117,6 +117,10 @@ div.nav-bar > p {
   background-image: url('images/product/product-header.jpg');
 }
 
+.pic-implementation {
+  background-image: url('images/implementation/implementation-header.jpg');
+}
+
 .pic-first {
   background-image: url('images/hero.jpg');
 }
@@ -177,6 +181,10 @@ div.nav-bar > p {
   padding: 3% 5%;
 }
 
+.gray-text {
+  color: rgb(110, 110, 110);
+}
+
 .learn-more {
   padding: 0 5%;
   color: rgb(110, 110, 110);
@@ -196,4 +204,24 @@ div.nav-bar > p {
 .foot {
   margin: 3%;
   color: rgb(111, 111, 111);
+}
+
+.unindent {
+  padding: 0;
+  margin: 0;
+}
+
+.list-heading {
+  display: flex;
+  align-items: baseline;
+  font-family: Avenir, sans-serif;
+  margin-bottom: 0;
+}
+
+.list-number {
+  margin-right: 1rem;
+}
+
+.list-text {
+  margin-top: 0;
 }
