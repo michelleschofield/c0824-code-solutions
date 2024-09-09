@@ -42,15 +42,25 @@
 
 .vert-center {
   align-items: center;
-  text-align: center;
 }
 
 .horz-center {
   justify-content: center;
 }
 
+.centered {
+  text-align: center;
+}
+
 .unbolded {
   font-weight: normal;
+}
+
+.bold {
+  font-weight: bold;
+  font-size: small;
+  font-family: Avenir, sans-serif;
+  color: black;
 }
 
 h2 {
@@ -119,6 +129,10 @@ div.nav-bar > p {
 
 .pic-implementation {
   background-image: url('images/implementation/implementation-header.jpg');
+}
+
+.pic-about-us {
+  background-image: url('images/about-us/about-us-header.jpg');
 }
 
 .pic-first {
@@ -224,4 +238,13 @@ div.nav-bar > p {
 
 .list-text {
   margin-top: 0;
+}
+
+.team-pic {
+  border-radius: 50%;
+}
+
+.team-member {
+  padding: 5%;
+  color: rgb(81, 81, 80);
 }
