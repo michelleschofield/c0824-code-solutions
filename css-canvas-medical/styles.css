@@ -1,0 +1,94 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.row {
+  display: flex;
+}
+
+.column-full {
+  width: 100%;
+}
+
+.column-third {
+  width: calc(100% / 3);
+}
+
+.column-two-thirds {
+  width: calc(200% / 3);
+}
+
+.column-fifth {
+  width: 20%;
+}
+
+.image {
+  width: 100%;
+}
+
+.vert-center {
+  align-items: center;
+}
+
+.company-name {
+  font-family: Avenir, sans-serif;
+}
+
+.text {
+  line-height: 1.5em;
+  font-size: small;
+}
+
+.header {
+  border-bottom: 1px solid rgb(198, 198, 198);
+  padding: 0 3%;
+}
+
+.nav-bar {
+  justify-content: space-around;
+  font-size: small;
+}
+
+div.nav-bar > p {
+  color: rgb(198, 198, 198);
+  font-family: Avenir, sans-serif;
+  height: 100%;
+}
+
+.blue-btn {
+  font-family: Avenir, sans-serif;
+  background-color: rgb(41, 68, 100);
+  color: white;
+  border-radius: 7%;
+  text-align: center;
+  padding: 100px auto;
+}
+
+.be-taller {
+  height: 35px;
+}
+
+.fancy-background {
+  background-image: url('images/hero.jpg');
+  background-size: contain;
+  margin: 5%;
+  color: white;
+  position: relative;
+  height: 405px;
+}
+
+.overlay {
+  background-color: rgb(0, 0, 0);
+  opacity: 0.2;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+}
+
+.please-show-up-over-the-overlay {
+  position: absolute;
+  margin: ;
+}
