@@ -13,3 +13,5 @@ $openModal.addEventListener('click', () => {
 $dismissModal.addEventListener('click', () => {
   $dialog.close();
 });
+
+console.log('Oops');
