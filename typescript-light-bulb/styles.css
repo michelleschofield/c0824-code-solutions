@@ -1,0 +1,43 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.light-bulb {
+  width: 15rem;
+  height: 15rem;
+  border-radius: 50%;
+}
+
+.container.day {
+  background-color: rgb(254, 249, 241);
+}
+
+.light-bulb.day {
+  background-color: rgb(249, 234, 132);
+  box-shadow: 0 0 30px rgb(249, 234, 132);
+}
+
+.container.night {
+  background-color: rgb(17, 17, 17);
+}
+
+.light-bulb.night {
+  background-color: rgb(37, 37, 37);
+}
+
+.moon.night {
+  width: 15rem;
+  height: 15rem;
+  background-color: rgb(17, 17, 17);
+  border-radius: 50%;
+  position: relative;
+  bottom: 2rem;
+  right: 4rem;
+}
