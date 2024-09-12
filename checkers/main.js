@@ -81,6 +81,10 @@ const board = [
     { playable: false },
   ],
 ];
+const $board = document.querySelectorAll('.board > .row');
+if (!$board) throw new Error('$board query failed');
+console.log($board);
+console.log('$board[0]', $board[0]);
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
 function movePiece(startLocation, endLocation) {
   const piece = board[startLocation[0]][startLocation[1]].piece;
@@ -204,4 +208,4 @@ function getTypescriptOffMyBack() {
   canMoveIfTaking([0, 0], [0, 0]);
   findMiddleSquare([0, 0], [0, 0]);
 }
-getTypescriptOffMyBack();
+console.log(getTypescriptOffMyBack);

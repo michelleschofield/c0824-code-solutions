@@ -18,6 +18,9 @@
 
 .square {
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .square.white {
@@ -26,4 +29,16 @@
 
 .square.black {
   background-color: black;
+}
+
+.piece {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  border-width: 3px;
+}
+
+.black-piece {
+  background-color: rgb(40, 40, 40);
+  border-color: red;
 }
