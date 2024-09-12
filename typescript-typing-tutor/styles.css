@@ -1,0 +1,22 @@
+.container {
+  text-align: center;
+  font-family: 'Nerko One', sans-serif;
+}
+
+.currentLetter {
+  border-bottom: 2px solid black;
+}
+
+.missedLetter {
+  color: red;
+  border-bottom: 2px solid red;
+}
+
+.completedLetter {
+  color: lightgreen;
+  border: none;
+}
+
+.space {
+  color: white;
+}
