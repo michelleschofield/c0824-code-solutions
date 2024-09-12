@@ -1,0 +1,29 @@
+.board {
+  border: 3px solid black;
+  width: 40rem;
+  height: 40rem;
+}
+
+.row {
+  display: flex;
+}
+
+.board > .row {
+  min-height: calc(100% / 8);
+}
+
+.column-eighth {
+  width: calc(100% / 8);
+}
+
+.square {
+  height: 100%;
+}
+
+.square.white {
+  background-color: white;
+}
+
+.square.black {
+  background-color: black;
+}
