@@ -8,97 +8,17 @@ interface Square {
   playable: boolean;
 }
 
-const board: Square[][] = [
-  [
-    { playable: false },
-    { playable: true, piece: { color: 'red', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'red', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'red', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'red', kinged: false } },
-  ],
-  [
-    { playable: true, piece: { color: 'red', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'red', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'red', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'red', kinged: false } },
-    { playable: false },
-  ],
-  [
-    { playable: false },
-    { playable: true, piece: { color: 'red', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'red', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'red', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'red', kinged: false } },
-  ],
-  [
-    { playable: true },
-    { playable: false },
-    { playable: true },
-    { playable: false },
-    { playable: true },
-    { playable: false },
-    { playable: true },
-    { playable: false },
-  ],
-  [
-    { playable: false },
-    { playable: true },
-    { playable: false },
-    { playable: true },
-    { playable: false },
-    { playable: true },
-    { playable: false },
-    { playable: true },
-  ],
-  [
-    { playable: true, piece: { color: 'black', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'black', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'black', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'black', kinged: false } },
-    { playable: false },
-  ],
-  [
-    { playable: false },
-    { playable: true, piece: { color: 'black', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'black', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'black', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'black', kinged: false } },
-  ],
-  [
-    { playable: true, piece: { color: 'black', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'black', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'black', kinged: false } },
-    { playable: false },
-    { playable: true, piece: { color: 'black', kinged: false } },
-    { playable: false },
-  ],
-];
+const board: Square[][] = [[], [], [], [], [], [], [], []];
 
 const $board = document.querySelectorAll('.board > .row');
 
 if (!$board) throw new Error('$board query failed');
 
-console.log($board);
-console.log('$board[0]', $board[0]);
+setUpBoard();
+console.log('board', board);
 
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
+// only checks for existence of piece to be moved doesn't care about rules
 function movePiece(startLocation: number[], endLocation: number[]): void {
   const piece = board[startLocation[0]][startLocation[1]].piece;
   if (piece) {
@@ -107,12 +27,14 @@ function movePiece(startLocation: number[], endLocation: number[]): void {
   }
 }
 
+// deletes piece at given location
 function takePiece(location: number[]): void {
   if (board[location[0]][location[1]].piece) {
     delete board[location[0]][location[1]].piece;
   }
 }
 
+// sets piece at given location to kinged
 function kingPiece(location: number[]): void {
   const piece = board[location[0]][location[1]].piece;
   if (piece) {
@@ -240,6 +162,62 @@ function findMiddleSquare(
   return middleSquare;
 }
 
+// sets board with pieces to start the game
+function setUpBoard(): void {
+  for (let i = 0; i < 8; i++) {
+    if (i % 2) {
+      board[i] = oddRow(i < 3 ? 'red' : i > 4 ? 'black' : '');
+    } else {
+      board[i] = evenRow(i < 3 ? 'red' : i > 4 ? 'black' : '');
+    }
+  }
+}
+
+// returns array to go in board with pieces of color provided, no pieces if empty string provided
+function oddRow(pieceColor: string): Square[] {
+  const row = [];
+
+  for (let i = 0; i < 8; i++) {
+    const playable = !(i % 2);
+    const square: Square = { playable };
+
+    if (playable && pieceColor) {
+      square.piece = {
+        kinged: false,
+        color: pieceColor,
+      };
+    }
+    row.push(square);
+  }
+  return row;
+}
+
+// returns array to go in board with pieces of color provided, no pieces if empty string provided
+function evenRow(pieceColor: string): Square[] {
+  const row = [];
+
+  for (let i = 0; i < 8; i++) {
+    let playable;
+    if (i % 2) {
+      playable = true;
+    } else {
+      playable = false;
+    }
+
+    const square: Square = { playable };
+
+    if (playable && pieceColor) {
+      square.piece = {
+        kinged: false,
+        color: pieceColor,
+      };
+    }
+    row.push(square);
+  }
+  return row;
+}
+
+// temporary solution to get typescript to quit giving me errors for not calling the functions
 function getTypescriptOffMyBack(): void {
   movePiece([0, 0], [0, 0]);
   takePiece([0, 0]);
@@ -247,6 +225,7 @@ function getTypescriptOffMyBack(): void {
   canMoveWithoutTaking([0, 0], [0, 0]);
   canMoveIfTaking([0, 0], [0, 0]);
   findMiddleSquare([0, 0], [0, 0]);
+  setUpBoard();
 }
 
 console.log(getTypescriptOffMyBack);
