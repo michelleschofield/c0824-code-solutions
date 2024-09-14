@@ -10,12 +10,9 @@ interface Square {
 
 const board: Square[][] = [[], [], [], [], [], [], [], []];
 
-const $board = document.querySelectorAll('.board > .row');
+const $board = document.querySelector('.board');
 
 if (!$board) throw new Error('$board query failed');
-
-setUpBoard();
-console.log('board', board);
 
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
 // only checks for existence of piece to be moved doesn't care about rules
@@ -217,6 +214,38 @@ function evenRow(pieceColor: string): Square[] {
   return row;
 }
 
+// loops through board in JS ands builds it in the dom
+function buildBoardInDom(): void {
+  if (!$board) throw new Error('$board query failed');
+
+  board.forEach((row) => {
+    const $row = document.createElement('div');
+    $row.className = 'row';
+
+    row.forEach((square) => {
+      const $column = document.createElement('div');
+      const $square = document.createElement('div');
+
+      const squareColor = square.playable ? 'black' : 'white';
+      $square.className = `square ${squareColor}`;
+      $column.className = 'column-eighth';
+
+      const piece = square.piece;
+      if (piece) {
+        const $piece = document.createElement('div');
+        $piece.className = `piece ${piece.color}`;
+
+        $square.appendChild($piece);
+      }
+
+      $column.appendChild($square);
+      $row.appendChild($column);
+    });
+
+    $board.appendChild($row);
+  });
+}
+
 // temporary solution to get typescript to quit giving me errors for not calling the functions
 function getTypescriptOffMyBack(): void {
   movePiece([0, 0], [0, 0]);
@@ -226,6 +255,7 @@ function getTypescriptOffMyBack(): void {
   canMoveIfTaking([0, 0], [0, 0]);
   findMiddleSquare([0, 0], [0, 0]);
   setUpBoard();
+  buildBoardInDom();
 }
 
 console.log(getTypescriptOffMyBack);

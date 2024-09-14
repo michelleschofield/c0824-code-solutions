@@ -38,7 +38,10 @@
   border-width: 3px;
 }
 
-.black-piece {
+.piece.black {
   background-color: rgb(40, 40, 40);
-  border-color: red;
+}
+
+.piece.red {
+  background-color: rgb(172, 22, 22);
 }
