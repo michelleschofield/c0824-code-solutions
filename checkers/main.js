@@ -16,7 +16,20 @@ $board.addEventListener('click', handleClick);
 function movePiece(startLocation, endLocation) {
   const piece = board[startLocation[0]][startLocation[1]].piece;
   if (piece) {
+    const $startSquare = document.getElementById(
+      `${startLocation[0]},${startLocation[1]}`
+    );
+    const $endSquare = document.getElementById(
+      `${endLocation[0]},${endLocation[1]}`
+    );
+    if (!$startSquare) throw new Error('$startSquare query failed');
+    if (!$endSquare) throw new Error('$endSquare query failed');
+    const $piece = $startSquare.children[0];
+    if (!$piece) throw new Error('$piece query failed');
+    console.log('$endSquare', $endSquare);
+    console.log();
     board[endLocation[0]][endLocation[1]].piece = piece;
+    $endSquare.appendChild($piece);
     delete board[startLocation[0]][startLocation[1]].piece;
   }
 }
@@ -24,9 +37,16 @@ function movePiece(startLocation, endLocation) {
 function takePiece(location) {
   const piece = board[location[0]][location[1]].piece;
   if (piece) {
+    const $takenSquare = document.getElementById(
+      `${location[0]},${location[1]}`
+    );
+    if (!$takenSquare) throw new Error('$takenSquare query failed');
+    const $takenPiece = $takenSquare.children[0];
     const color = piece.color;
     if (color === 'red' || color === 'black') gameState[color] -= 1;
     delete board[location[0]][location[1]].piece;
+    $takenPiece.remove();
+    checkForWin();
   }
 }
 // sets piece at given location to kinged
@@ -212,7 +232,11 @@ function handleClick(event) {
     if (!pieceSelected) return;
     const squareCoords = getCoords($eventTarget);
     if (canMoveWithoutTaking(pieceSelected, squareCoords)) {
-      console.log('can move without taking');
+      movePiece(pieceSelected, squareCoords);
+      toggleTurn();
+    } else if (canMoveIfTaking(pieceSelected, squareCoords)) {
+      movePiece(pieceSelected, squareCoords);
+      takePiece(findMiddleSquare(pieceSelected, squareCoords));
     }
   } else if (
     className.includes(gameState.turn) &&
@@ -238,5 +262,21 @@ function getTypescriptOffMyBack() {
   findMiddleSquare([0, 0], [0, 0]);
   setUpBoard();
   buildBoardInDom();
+}
+function toggleTurn() {
+  if (gameState.turn === 'black') {
+    gameState.turn = 'red';
+  } else if (gameState.turn === 'red') {
+    gameState.turn = 'black';
+  } else {
+    throw new Error('turn is neither black nor red');
+  }
+}
+function checkForWin() {
+  if (!gameState.red) {
+    console.log('Black Wins!');
+  } else if (!gameState.black) {
+    console.log('Red Wins!');
+  }
 }
 console.log(getTypescriptOffMyBack);
