@@ -23,8 +23,8 @@
   align-items: center;
 }
 
-.square.white {
-  background-color: white;
+.square.red {
+  background-color: red;
 }
 
 .square.black {

@@ -8,11 +8,29 @@ interface Square {
   playable: boolean;
 }
 
+interface GameState {
+  turn: string;
+  pieceSelected: [number, number] | null;
+  red: number;
+  black: number;
+}
+
+const gameState: GameState = {
+  turn: 'black',
+  pieceSelected: null,
+  red: 12,
+  black: 12,
+};
 const board: Square[][] = [[], [], [], [], [], [], [], []];
 
 const $board = document.querySelector('.board');
 
 if (!$board) throw new Error('$board query failed');
+
+setUpBoard();
+buildBoardInDom();
+
+$board.addEventListener('click', handleClick);
 
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
 // only checks for existence of piece to be moved doesn't care about rules
@@ -24,9 +42,13 @@ function movePiece(startLocation: number[], endLocation: number[]): void {
   }
 }
 
-// deletes piece at given location
+// deletes piece at given location and reduces according number in pieces
 function takePiece(location: number[]): void {
-  if (board[location[0]][location[1]].piece) {
+  const piece = board[location[0]][location[1]].piece;
+  if (piece) {
+    const color = piece.color;
+    if (color === 'red' || color === 'black') gameState[color] -= 1;
+
     delete board[location[0]][location[1]].piece;
   }
 }
@@ -218,21 +240,24 @@ function evenRow(pieceColor: string): Square[] {
 function buildBoardInDom(): void {
   if (!$board) throw new Error('$board query failed');
 
-  board.forEach((row) => {
+  board.forEach((row, x) => {
     const $row = document.createElement('div');
     $row.className = 'row';
 
-    row.forEach((square) => {
+    row.forEach((square, y) => {
       const $column = document.createElement('div');
       const $square = document.createElement('div');
 
-      const squareColor = square.playable ? 'black' : 'white';
+      const squareColor = square.playable ? 'black' : 'red';
       $square.className = `square ${squareColor}`;
+      $square.id = `${x},${y}`;
+
       $column.className = 'column-eighth';
 
       const piece = square.piece;
       if (piece) {
         const $piece = document.createElement('div');
+
         $piece.className = `piece ${piece.color}`;
 
         $square.appendChild($piece);
@@ -244,6 +269,35 @@ function buildBoardInDom(): void {
 
     $board.appendChild($row);
   });
+}
+
+function handleClick(event: Event): void {
+  const $eventTarget = event.target as HTMLDivElement;
+  const className = $eventTarget.className;
+
+  if (className.includes('square')) {
+    const pieceSelected = gameState.pieceSelected;
+    if (!pieceSelected) return;
+
+    const squareCoords = getCoords($eventTarget);
+    if (canMoveWithoutTaking(pieceSelected, squareCoords)) {
+      console.log('can move without taking');
+    }
+  } else if (
+    className.includes(gameState.turn) &&
+    className.includes('piece')
+  ) {
+    const $square = $eventTarget.parentElement as HTMLDivElement;
+    const pieceCoords = getCoords($square);
+    gameState.pieceSelected = pieceCoords;
+  }
+}
+
+function getCoords($square: HTMLDivElement): [number, number] {
+  const stringCoords = $square?.id;
+
+  const coords = stringCoords.split(',');
+  return coords.map((x) => +x) as [number, number];
 }
 
 // temporary solution to get typescript to quit giving me errors for not calling the functions
