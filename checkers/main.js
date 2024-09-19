@@ -171,6 +171,7 @@ function getValidMoves(coords) {
     };
   }
 }
+// does not work and will not work until movePiece function is updated to update the arrays of pieces in gameState
 function getMovesForColor(color) {
   const pieces = gameState[color];
   let canJump = false;
