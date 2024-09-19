@@ -32,6 +32,8 @@ renderBoard();
 
 $board.addEventListener('click', handleClick);
 
+$board.addEventListener('mouseover', handleMouseover);
+
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
 // only checks for existence of piece to be moved doesn't care about rules
 function movePiece(startLocation: number[], endLocation: number[]): void {
@@ -437,6 +439,15 @@ function handleClick(event: Event): void {
     const pieceCoords = getCoords($square);
     gameState.pieceSelected = pieceCoords;
   }
+}
+
+function handleMouseover(event: Event): void {
+  const $eventTarget = event.target as HTMLElement;
+  if (!$eventTarget.className.includes('piece')) return;
+  const $square = $eventTarget.parentElement as HTMLDivElement;
+  const pieceCoords = getCoords($square);
+  const validMoves = getValidMoves(pieceCoords);
+  console.log('validMoves', validMoves);
 }
 
 function getCoords($square: HTMLDivElement): [number, number] {

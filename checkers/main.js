@@ -11,6 +11,7 @@ if (!$board) throw new Error('$board query failed');
 setUpBoard();
 renderBoard();
 $board.addEventListener('click', handleClick);
+$board.addEventListener('mouseover', handleMouseover);
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
 // only checks for existence of piece to be moved doesn't care about rules
 function movePiece(startLocation, endLocation) {
@@ -337,6 +338,14 @@ function handleClick(event) {
     const pieceCoords = getCoords($square);
     gameState.pieceSelected = pieceCoords;
   }
+}
+function handleMouseover(event) {
+  const $eventTarget = event.target;
+  if (!$eventTarget.className.includes('piece')) return;
+  const $square = $eventTarget.parentElement;
+  const pieceCoords = getCoords($square);
+  const validMoves = getValidMoves(pieceCoords);
+  console.log('validMoves', validMoves);
 }
 function getCoords($square) {
   const stringCoords = $square?.id;
