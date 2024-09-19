@@ -240,6 +240,13 @@ function getValidMoves(coords: [number, number]): {
   }
 }
 
+// function getMovesForColor(color: 'red' | 'black'): {
+//   moveType: 'jump' | 'noJump' | '';
+//   moves: [number, number][];
+// } {
+//   return { moveType: '', moves: [] };
+// }
+
 // takes coords of two squares that are diagonal to each other with one square in between
 // returns the coords of the square in between
 // has a chance of returning a non existent square if passed squares that aren't two over in either direction
@@ -423,9 +430,9 @@ function toggleTurn(): void {
 
 // if either black or red have no pieces in gameState, the other is declared winner
 function checkForWin(): void {
-  if (!gameState.red) {
+  if (!gameState.red.length) {
     console.log('Black Wins!');
-  } else if (!gameState.black) {
+  } else if (!gameState.black.length) {
     console.log('Red Wins!');
   }
 }
