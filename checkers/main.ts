@@ -13,11 +13,16 @@ interface GameState {
   pieceSelected: [number, number] | null;
   red: number;
   black: number;
+  movementInfo: {
+    moveType: 'jump' | 'noJump' | '';
+    moves: [number, number][];
+  } | null;
 }
 
 const gameState: GameState = {
   turn: 'black',
   pieceSelected: null,
+  movementInfo: null,
   red: 12,
   black: 12,
 };
@@ -89,7 +94,10 @@ function kingPiece(location: number[]): void {
 }
 
 // returns an array with all valid moves for a piece at provided coords
-function getValidMoves(coords: [number, number]): [number, number][] {
+function getValidMoves(coords: [number, number]): {
+  moveType: 'jump' | 'noJump' | '';
+  moves: [number, number][];
+} {
   if (coords[0] > 7 || coords[1] > 7)
     throw new Error(
       `Cannot get moves for ${coords} because square does not exist`
@@ -99,7 +107,7 @@ function getValidMoves(coords: [number, number]): [number, number][] {
   const piece = square.piece;
 
   if (!square.playable) throw new Error(`Square at ${coords} is not playable`);
-  if (!piece) return [];
+  if (!piece) return { moveType: '', moves: [] };
 
   let directionAllowed;
   if (piece.color === 'red') {
@@ -160,7 +168,12 @@ function getValidMoves(coords: [number, number]): [number, number][] {
     });
   });
 
-  if (jumpMoves.length) return jumpMoves;
+  if (jumpMoves.length) {
+    return {
+      moveType: 'jump',
+      moves: jumpMoves,
+    };
+  }
 
   const columns: number[] = [];
   if (coords[1] + 1 <= 7) {
@@ -199,7 +212,17 @@ function getValidMoves(coords: [number, number]): [number, number][] {
     });
   });
 
-  return moves;
+  if (moves.length) {
+    return {
+      moveType: 'noJump',
+      moves,
+    };
+  } else {
+    return {
+      moveType: '',
+      moves: [],
+    };
+  }
 }
 
 // lots and lots of tests
@@ -418,15 +441,30 @@ function handleClick(event: Event): void {
   const className = $eventTarget.className;
 
   if (className.includes('square')) {
+    const movementInfo = gameState.movementInfo;
     const pieceSelected = gameState.pieceSelected;
-    if (!pieceSelected) return;
+
+    if (!movementInfo || !pieceSelected) return;
 
     const squareCoords = getCoords($eventTarget);
 
-    if (canMoveWithoutTaking(pieceSelected, squareCoords)) {
+    const validMoves = movementInfo.moves;
+    const stringfiedCoords = JSON.stringify(squareCoords);
+
+    let squareIsValidMove = false;
+
+    validMoves.forEach((move) => {
+      if (JSON.stringify(move) === stringfiedCoords) {
+        squareIsValidMove = true;
+      }
+    });
+
+    if (!squareIsValidMove) return;
+
+    if (movementInfo.moveType === 'noJump') {
       movePiece(pieceSelected, squareCoords);
       toggleTurn();
-    } else if (canMoveIfTaking(pieceSelected, squareCoords)) {
+    } else if (movementInfo.moveType === 'jump') {
       movePiece(pieceSelected, squareCoords);
       takePiece(findMiddleSquare(pieceSelected, squareCoords));
       toggleTurn();
@@ -437,7 +475,10 @@ function handleClick(event: Event): void {
   ) {
     const $square = $eventTarget.parentElement as HTMLDivElement;
     const pieceCoords = getCoords($square);
+    const movementInfo = getValidMoves(pieceCoords);
+
     gameState.pieceSelected = pieceCoords;
+    gameState.movementInfo = movementInfo;
   }
 }
 
