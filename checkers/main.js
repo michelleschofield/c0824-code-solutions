@@ -2,9 +2,10 @@
 const gameState = {
   turn: 'black',
   pieceSelected: null,
-  movementInfo: null,
+  movesForSelectedPiece: null,
   red: [],
   black: [],
+  piecesAndMovesForTurn: [],
 };
 const board = [[], [], [], [], [], [], [], []];
 const $board = document.querySelector('.board');
@@ -170,12 +171,29 @@ function getValidMoves(coords) {
     };
   }
 }
-// function getMovesForColor(color: 'red' | 'black'): {
-//   moveType: 'jump' | 'noJump' | '';
-//   moves: [number, number][];
-// } {
-//   return { moveType: '', moves: [] };
-// }
+function getMovesForColor(color) {
+  const pieces = gameState[color];
+  let canJump = false;
+  const allMoves = [];
+  pieces.forEach((coords) => {
+    const movement = getValidMoves(coords);
+    if (movement.moveType === 'jump') {
+      canJump = true;
+      allMoves.push({ coords, movement });
+    } else if (!canJump && movement.moveType) {
+      allMoves.push({ coords, movement });
+    }
+  });
+  if (canJump) {
+    const jumpMovesOnly = allMoves.filter((obj) => {
+      if (obj.movement.moveType === 'jump') return obj;
+      return undefined;
+    });
+    console.log('jumpMovesOnly', jumpMovesOnly);
+  }
+  return allMoves;
+}
+console.log(getMovesForColor);
 // takes coords of two squares that are diagonal to each other with one square in between
 // returns the coords of the square in between
 // has a chance of returning a non existent square if passed squares that aren't two over in either direction
@@ -191,18 +209,18 @@ function findMiddleSquare(startLocation, endLocation) {
   ];
   return middleSquare;
 }
-// sets board with pieces to start the game
+// sets board with pieces to start the game and populates color arrays in gameState
 function setUpBoard() {
   for (let i = 0; i < 8; i++) {
     if (i % 2) {
-      board[i] = oddRow(i < 3 ? 'red' : i > 4 ? 'black' : '');
+      board[i] = oddRow(i < 3 ? 'red' : i > 4 ? 'black' : '', i);
     } else {
-      board[i] = evenRow(i < 3 ? 'red' : i > 4 ? 'black' : '');
+      board[i] = evenRow(i < 3 ? 'red' : i > 4 ? 'black' : '', i);
     }
   }
 }
 // returns array to go in board with pieces of color provided, no pieces if empty string provided
-function oddRow(pieceColor) {
+function oddRow(pieceColor, x) {
   const row = [];
   for (let i = 0; i < 8; i++) {
     const playable = !(i % 2);
@@ -212,13 +230,14 @@ function oddRow(pieceColor) {
         kinged: false,
         color: pieceColor,
       };
+      gameState[pieceColor].push([x, i]);
     }
     row.push(square);
   }
   return row;
 }
 // returns array to go in board with pieces of color provided, no pieces if empty string provided
-function evenRow(pieceColor) {
+function evenRow(pieceColor, x) {
   const row = [];
   for (let i = 0; i < 8; i++) {
     let playable;
@@ -233,6 +252,7 @@ function evenRow(pieceColor) {
         kinged: false,
         color: pieceColor,
       };
+      gameState[pieceColor].push([x, i]);
     }
     row.push(square);
   }
@@ -267,7 +287,7 @@ function handleClick(event) {
   const $eventTarget = event.target;
   const className = $eventTarget.className;
   if (className.includes('square')) {
-    const movementInfo = gameState.movementInfo;
+    const movementInfo = gameState.movesForSelectedPiece;
     const pieceSelected = gameState.pieceSelected;
     if (!movementInfo || !pieceSelected) return;
     const squareCoords = getCoords($eventTarget);
@@ -296,7 +316,7 @@ function handleClick(event) {
     const pieceCoords = getCoords($square);
     const movementInfo = getValidMoves(pieceCoords);
     gameState.pieceSelected = pieceCoords;
-    gameState.movementInfo = movementInfo;
+    gameState.movesForSelectedPiece = movementInfo;
   }
 }
 function handleMouseover(event) {

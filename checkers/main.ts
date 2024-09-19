@@ -8,24 +8,32 @@ interface Square {
   playable: boolean;
 }
 
+interface MoveInfo {
+  moveType: 'jump' | 'noJump' | '';
+  moves: [number, number][];
+}
+
 interface GameState {
-  turn: string;
+  turn: 'black' | 'red';
   pieceSelected: [number, number] | null;
   red: [number, number][];
   black: [number, number][];
-  movementInfo: {
-    moveType: 'jump' | 'noJump' | '';
-    moves: [number, number][];
-  } | null;
+  movesForSelectedPiece: MoveInfo | null;
+  piecesAndMovesForTurn: {
+    coords: [number, number];
+    movement: MoveInfo | null;
+  }[];
 }
 
 const gameState: GameState = {
   turn: 'black',
   pieceSelected: null,
-  movementInfo: null,
+  movesForSelectedPiece: null,
   red: [],
   black: [],
+  piecesAndMovesForTurn: [],
 };
+
 const board: Square[][] = [[], [], [], [], [], [], [], []];
 
 const $board = document.querySelector('.board');
@@ -109,10 +117,7 @@ function kingPiece(location: [number, number]): void {
 console.log(kingPiece);
 
 // returns an array with all valid moves for a piece at provided coords
-function getValidMoves(coords: [number, number]): {
-  moveType: 'jump' | 'noJump' | '';
-  moves: [number, number][];
-} {
+function getValidMoves(coords: [number, number]): MoveInfo {
   if (coords[0] > 7 || coords[1] > 7)
     throw new Error(
       `Cannot get moves for ${coords} because square does not exist`
@@ -240,12 +245,36 @@ function getValidMoves(coords: [number, number]): {
   }
 }
 
-// function getMovesForColor(color: 'red' | 'black'): {
-//   moveType: 'jump' | 'noJump' | '';
-//   moves: [number, number][];
-// } {
-//   return { moveType: '', moves: [] };
-// }
+function getMovesForColor(
+  color: 'red' | 'black'
+): { coords: [number, number]; movement: MoveInfo }[] {
+  const pieces = gameState[color];
+  let canJump = false;
+  const allMoves: { coords: [number, number]; movement: MoveInfo }[] = [];
+
+  pieces.forEach((coords) => {
+    const movement = getValidMoves(coords);
+
+    if (movement.moveType === 'jump') {
+      canJump = true;
+      allMoves.push({ coords, movement });
+    } else if (!canJump && movement.moveType) {
+      allMoves.push({ coords, movement });
+    }
+  });
+
+  if (canJump) {
+    const jumpMovesOnly = allMoves.filter((obj) => {
+      if (obj.movement.moveType === 'jump') return obj;
+      return undefined;
+    });
+    console.log('jumpMovesOnly', jumpMovesOnly);
+  }
+
+  return allMoves;
+}
+
+console.log(getMovesForColor);
 
 // takes coords of two squares that are diagonal to each other with one square in between
 // returns the coords of the square in between
@@ -266,19 +295,19 @@ function findMiddleSquare(
   return middleSquare;
 }
 
-// sets board with pieces to start the game
+// sets board with pieces to start the game and populates color arrays in gameState
 function setUpBoard(): void {
   for (let i = 0; i < 8; i++) {
     if (i % 2) {
-      board[i] = oddRow(i < 3 ? 'red' : i > 4 ? 'black' : '');
+      board[i] = oddRow(i < 3 ? 'red' : i > 4 ? 'black' : '', i);
     } else {
-      board[i] = evenRow(i < 3 ? 'red' : i > 4 ? 'black' : '');
+      board[i] = evenRow(i < 3 ? 'red' : i > 4 ? 'black' : '', i);
     }
   }
 }
 
 // returns array to go in board with pieces of color provided, no pieces if empty string provided
-function oddRow(pieceColor: 'black' | 'red' | ''): Square[] {
+function oddRow(pieceColor: 'black' | 'red' | '', x: number): Square[] {
   const row = [];
 
   for (let i = 0; i < 8; i++) {
@@ -290,6 +319,8 @@ function oddRow(pieceColor: 'black' | 'red' | ''): Square[] {
         kinged: false,
         color: pieceColor,
       };
+
+      gameState[pieceColor].push([x, i]);
     }
     row.push(square);
   }
@@ -297,7 +328,7 @@ function oddRow(pieceColor: 'black' | 'red' | ''): Square[] {
 }
 
 // returns array to go in board with pieces of color provided, no pieces if empty string provided
-function evenRow(pieceColor: 'black' | 'red' | ''): Square[] {
+function evenRow(pieceColor: 'black' | 'red' | '', x: number): Square[] {
   const row = [];
 
   for (let i = 0; i < 8; i++) {
@@ -315,6 +346,8 @@ function evenRow(pieceColor: 'black' | 'red' | ''): Square[] {
         kinged: false,
         color: pieceColor,
       };
+
+      gameState[pieceColor].push([x, i]);
     }
     row.push(square);
   }
@@ -361,7 +394,7 @@ function handleClick(event: Event): void {
   const className = $eventTarget.className;
 
   if (className.includes('square')) {
-    const movementInfo = gameState.movementInfo;
+    const movementInfo = gameState.movesForSelectedPiece;
     const pieceSelected = gameState.pieceSelected;
 
     if (!movementInfo || !pieceSelected) return;
@@ -398,7 +431,7 @@ function handleClick(event: Event): void {
     const movementInfo = getValidMoves(pieceCoords);
 
     gameState.pieceSelected = pieceCoords;
-    gameState.movementInfo = movementInfo;
+    gameState.movesForSelectedPiece = movementInfo;
   }
 }
 
