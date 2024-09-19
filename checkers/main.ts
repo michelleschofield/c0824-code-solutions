@@ -49,9 +49,7 @@ function movePiece(startLocation: number[], endLocation: number[]): void {
 
     const $piece = $startSquare.children[0] as HTMLDivElement;
     if (!$piece) throw new Error('$piece query failed');
-    console.log('$endSquare', $endSquare);
 
-    console.log();
     board[endLocation[0]][endLocation[1]].piece = piece;
 
     $endSquare.appendChild($piece);
@@ -162,7 +160,14 @@ function getValidMoves(coords: [number, number]): [number, number][] {
 
   if (jumpMoves.length) return jumpMoves;
 
-  const columns = [coords[1] + 2, coords[1] - 2];
+  const columns: number[] = [];
+  if (coords[1] + 1 <= 7) {
+    jumpColumns.push(coords[1] + 1);
+  }
+  if (coords[1] - 1 >= 0) {
+    jumpColumns.push(coords[1] - 1);
+  }
+
   const rows: number[] = [];
 
   if (piece.kinged) {

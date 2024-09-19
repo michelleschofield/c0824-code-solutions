@@ -26,8 +26,6 @@ function movePiece(startLocation, endLocation) {
     if (!$endSquare) throw new Error('$endSquare query failed');
     const $piece = $startSquare.children[0];
     if (!$piece) throw new Error('$piece query failed');
-    console.log('$endSquare', $endSquare);
-    console.log();
     board[endLocation[0]][endLocation[1]].piece = piece;
     $endSquare.appendChild($piece);
     delete board[startLocation[0]][startLocation[1]].piece;
@@ -115,7 +113,13 @@ function getValidMoves(coords) {
     });
   });
   if (jumpMoves.length) return jumpMoves;
-  const columns = [coords[1] + 2, coords[1] - 2];
+  const columns = [];
+  if (coords[1] + 1 <= 7) {
+    jumpColumns.push(coords[1] + 1);
+  }
+  if (coords[1] - 1 >= 0) {
+    jumpColumns.push(coords[1] - 1);
+  }
   const rows = [];
   if (piece.kinged) {
     if (coords[0] + 1 <= 7) {
