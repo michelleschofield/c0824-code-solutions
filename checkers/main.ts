@@ -11,8 +11,8 @@ interface Square {
 interface GameState {
   turn: string;
   pieceSelected: [number, number] | null;
-  red: number;
-  black: number;
+  red: [number, number][];
+  black: [number, number][];
   movementInfo: {
     moveType: 'jump' | 'noJump' | '';
     moves: [number, number][];
@@ -23,8 +23,8 @@ const gameState: GameState = {
   turn: 'black',
   pieceSelected: null,
   movementInfo: null,
-  red: 12,
-  black: 12,
+  red: [],
+  black: [],
 };
 const board: Square[][] = [[], [], [], [], [], [], [], []];
 
@@ -41,57 +41,72 @@ $board.addEventListener('mouseover', handleMouseover);
 
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
 // only checks for existence of piece to be moved doesn't care about rules
-function movePiece(startLocation: number[], endLocation: number[]): void {
+function movePiece(
+  startLocation: [number, number],
+  endLocation: [number, number]
+): void {
   const piece = board[startLocation[0]][startLocation[1]].piece;
-  if (piece) {
-    const $startSquare = document.getElementById(
-      `${startLocation[0]},${startLocation[1]}`
-    );
-    const $endSquare = document.getElementById(
-      `${endLocation[0]},${endLocation[1]}`
-    );
+  if (!piece) return;
+  const $startSquare = document.getElementById(
+    `${startLocation[0]},${startLocation[1]}`
+  );
+  const $endSquare = document.getElementById(
+    `${endLocation[0]},${endLocation[1]}`
+  );
 
-    if (!$startSquare) throw new Error('$startSquare query failed');
-    if (!$endSquare) throw new Error('$endSquare query failed');
+  if (!$startSquare) throw new Error('$startSquare query failed');
+  if (!$endSquare) throw new Error('$endSquare query failed');
 
-    const $piece = $startSquare.children[0] as HTMLDivElement;
-    if (!$piece) throw new Error('$piece query failed');
+  const $piece = $startSquare.children[0] as HTMLDivElement;
+  if (!$piece) throw new Error('$piece query failed');
 
-    board[endLocation[0]][endLocation[1]].piece = piece;
+  board[endLocation[0]][endLocation[1]].piece = piece;
 
-    $endSquare.appendChild($piece);
-    delete board[startLocation[0]][startLocation[1]].piece;
-  }
+  $endSquare.appendChild($piece);
+  delete board[startLocation[0]][startLocation[1]].piece;
 }
 
-// deletes piece at given location and reduces the number associated with the color of the piece taken in gameState
-function takePiece(location: number[]): void {
+// deletes piece at given location and removes the matching coords from the array for the color of the piece in gameState
+function takePiece(location: [number, number]): void {
   const piece = board[location[0]][location[1]].piece;
-  if (piece) {
-    const $takenSquare = document.getElementById(
-      `${location[0]},${location[1]}`
-    );
+  if (!piece) return;
 
-    if (!$takenSquare) throw new Error('$takenSquare query failed');
-    const $takenPiece = $takenSquare.children[0];
+  const $takenSquare = document.getElementById(`${location[0]},${location[1]}`);
 
-    const color = piece.color;
-    if (color === 'red' || color === 'black') gameState[color] -= 1;
+  if (!$takenSquare) throw new Error('$takenSquare query failed');
+  const $takenPiece = $takenSquare.children[0];
 
-    delete board[location[0]][location[1]].piece;
-    $takenPiece.remove();
+  const color = piece.color;
+  const stringifiedLocation = JSON.stringify(location);
+  let index;
 
-    checkForWin();
+  if (color === 'red' || color === 'black') {
+    gameState[color].forEach((coords, i) => {
+      if (JSON.stringify(coords) === stringifiedLocation) {
+        index = i;
+      }
+    });
   }
+
+  if (index) {
+    gameState[color].splice(index, 1);
+  }
+
+  delete board[location[0]][location[1]].piece;
+  $takenPiece.remove();
+
+  checkForWin();
 }
 
 // sets piece at given location to kinged
-function kingPiece(location: number[]): void {
+function kingPiece(location: [number, number]): void {
   const piece = board[location[0]][location[1]].piece;
   if (piece) {
     piece.kinged = true;
   }
 }
+
+console.log(kingPiece);
 
 // returns an array with all valid moves for a piece at provided coords
 function getValidMoves(coords: [number, number]): {
@@ -225,121 +240,19 @@ function getValidMoves(coords: [number, number]): {
   }
 }
 
-// lots and lots of tests
-function canMoveWithoutTaking(
-  startLocation: number[],
-  endLocation: number[]
-): boolean {
-  const piece = board[startLocation[0]][startLocation[1]].piece;
-  if (
-    !board[endLocation[0]][endLocation[1]].playable ||
-    !board[startLocation[0]][startLocation[1]].playable
-  ) {
-    return false;
-  } else if (
-    piece === undefined ||
-    board[endLocation[0]][endLocation[1]].piece
-  ) {
-    return false;
-  }
-
-  const columns = [startLocation[1] + 1, startLocation[1] - 1];
-  const rows: number[] = [];
-
-  if (piece.kinged) {
-    rows.push(startLocation[0] + 1, startLocation[0] - 1);
-  } else {
-    const color = piece.color;
-    let direction;
-
-    if (color === 'red') {
-      direction = 1;
-    } else if (color === 'black') {
-      direction = -1;
-    } else {
-      return false;
-    }
-    rows.push(startLocation[0] + direction);
-  }
-
-  if (rows.includes(endLocation[0]) && columns.includes(endLocation[1])) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-// seems to be working
-function canMoveIfTaking(
-  startLocation: number[],
-  endLocation: number[]
-): boolean {
-  const piece = board[startLocation[0]][startLocation[1]].piece;
-
-  if (
-    !board[endLocation[0]][endLocation[1]].playable ||
-    !board[startLocation[0]][startLocation[1]].playable
-  ) {
-    return false;
-  } else if (
-    piece === undefined ||
-    board[endLocation[0]][endLocation[1]].piece
-  ) {
-    return false;
-  }
-
-  const columns = [startLocation[1] + 2, startLocation[1] - 2];
-  const rows = [];
-  const color = piece.color;
-
-  if (piece.kinged) {
-    rows.push(startLocation[0] + 2, startLocation[0] - 2);
-  } else {
-    let directionAllowed;
-    if (color === 'red') {
-      directionAllowed = 1;
-    } else if (color === 'black') {
-      directionAllowed = -1;
-    } else {
-      return false;
-    }
-    rows.push(startLocation[0] + directionAllowed * 2);
-  }
-
-  if (!(rows.includes(endLocation[0]) && columns.includes(endLocation[1]))) {
-    return false;
-  }
-
-  const middleSquare = findMiddleSquare(startLocation, endLocation);
-  const attackedPiece = board[middleSquare[0]][middleSquare[1]].piece;
-  let attackedColor;
-
-  if (attackedPiece) {
-    attackedColor = attackedPiece.color;
-  } else {
-    return false;
-  }
-
-  if (attackedColor && attackedColor !== color) {
-    return true;
-  }
-
-  return false;
-}
-
 // takes coords of two squares that are diagonal to each other with one square in between
 // returns the coords of the square in between
 // has a chance of returning a non existent square if passed squares that aren't two over in either direction
 function findMiddleSquare(
-  startLocation: number[],
-  endLocation: number[]
-): number[] {
+  startLocation: [number, number],
+  endLocation: [number, number]
+): [number, number] {
   const distanceGoing = [
     startLocation[0] - endLocation[0],
     startLocation[1] - endLocation[1],
   ];
   const directionGoing = distanceGoing.map((x) => x / 2);
-  const middleSquare = [
+  const middleSquare: [number, number] = [
     startLocation[0] - directionGoing[0],
     startLocation[1] - directionGoing[1],
   ];
@@ -449,12 +362,12 @@ function handleClick(event: Event): void {
     const squareCoords = getCoords($eventTarget);
 
     const validMoves = movementInfo.moves;
-    const stringfiedCoords = JSON.stringify(squareCoords);
+    const stringifiedCoords = JSON.stringify(squareCoords);
 
     let squareIsValidMove = false;
 
     validMoves.forEach((move) => {
-      if (JSON.stringify(move) === stringfiedCoords) {
+      if (JSON.stringify(move) === stringifiedCoords) {
         squareIsValidMove = true;
       }
     });
@@ -516,18 +429,3 @@ function checkForWin(): void {
     console.log('Red Wins!');
   }
 }
-
-// temporary solution to get typescript to quit giving me errors for not calling the functions
-function getTypescriptOffMyBack(): void {
-  movePiece([0, 0], [0, 0]);
-  takePiece([0, 0]);
-  kingPiece([0, 0]);
-  canMoveWithoutTaking([0, 0], [0, 0]);
-  canMoveIfTaking([0, 0], [0, 0]);
-  findMiddleSquare([0, 0], [0, 0]);
-  setUpBoard();
-  renderBoard();
-  getValidMoves([0, 0]);
-}
-
-console.log(getTypescriptOffMyBack);
