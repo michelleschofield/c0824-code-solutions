@@ -1,6 +1,6 @@
 interface Piece {
   kinged: boolean;
-  color: string;
+  color: 'black' | 'red';
 }
 
 interface Square {
@@ -28,7 +28,7 @@ const $board = document.querySelector('.board');
 if (!$board) throw new Error('$board query failed');
 
 setUpBoard();
-buildBoardInDom();
+renderBoard();
 
 $board.addEventListener('click', handleClick);
 
@@ -59,7 +59,7 @@ function movePiece(startLocation: number[], endLocation: number[]): void {
   }
 }
 
-// deletes piece at given location and reduces according number in pieces
+// deletes piece at given location and reduces the number associated with the color of the piece taken in gameState
 function takePiece(location: number[]): void {
   const piece = board[location[0]][location[1]].piece;
   if (piece) {
@@ -86,6 +86,113 @@ function kingPiece(location: number[]): void {
   if (piece) {
     piece.kinged = true;
   }
+}
+
+// has not been tested and probably has bugs
+function getValidMoves(coords: [number, number]): [number, number][] {
+  if (coords[0] > 7 || coords[1] > 7)
+    throw new Error(
+      `Cannot get moves for ${coords} because square does not exist`
+    );
+
+  const square = board[coords[0]][coords[1]];
+  const piece = square.piece;
+
+  if (!square.playable) throw new Error(`Square at ${coords} is not playable`);
+  if (!piece) return [];
+
+  let directionAllowed;
+  if (piece.color === 'red') {
+    directionAllowed = 1;
+  } else if (piece.color === 'black') {
+    directionAllowed = -1;
+  } else {
+    throw new Error(`${piece.color} is not a valid piece color`);
+  }
+
+  const jumpColumns: number[] = [];
+  if (coords[1] + 2 <= 7) {
+    jumpColumns.push(coords[1] + 2);
+  }
+  if (coords[1] - 2 >= 0) {
+    jumpColumns.push(coords[1] - 2);
+  }
+
+  const jumpRows: number[] = [];
+
+  if (piece.kinged) {
+    if (coords[0] + 2 <= 7) {
+      jumpRows.push(coords[0] + 2);
+    }
+    if (coords[0] - 2 >= 0) {
+      jumpRows.push(coords[0] - 2);
+    }
+  } else {
+    const x = coords[0] + directionAllowed * 2;
+    if (x >= 0 && x <= 7) {
+      jumpRows.push(x);
+    }
+  }
+
+  const jumpMoves: [number, number][] = [];
+
+  jumpRows.forEach((x) => {
+    jumpColumns.forEach((y) => {
+      const endCoords: [number, number] = [x, y];
+
+      if (!board[endCoords[0]][endCoords[1]]) return;
+
+      const middleSquare = findMiddleSquare(coords, endCoords);
+      const attackedPiece = board[middleSquare[0]][middleSquare[1]].piece;
+      let attackedColor;
+
+      if (attackedPiece) {
+        attackedColor = attackedPiece.color;
+      } else {
+        return;
+      }
+
+      if (board[endCoords[0]][endCoords[1]].piece) return;
+
+      if (attackedColor && attackedColor !== piece.color) {
+        jumpMoves.push(endCoords);
+      }
+    });
+  });
+
+  if (jumpMoves.length) return jumpMoves;
+
+  const columns = [coords[1] + 2, coords[1] - 2];
+  const rows: number[] = [];
+
+  if (piece.kinged) {
+    if (coords[0] + 1 <= 7) {
+      rows.push(coords[0] + 1);
+    }
+    if (coords[0] - 1 >= 0) {
+      rows.push(coords[0] - 1);
+    }
+  } else {
+    const x = coords[0] + directionAllowed;
+    if (x >= 0 && x <= 7) {
+      rows.push(x);
+    }
+  }
+
+  const moves: [number, number][] = [];
+
+  rows.forEach((x) => {
+    columns.forEach((y) => {
+      const endCoords: [number, number] = [x, y];
+
+      if (!board[endCoords[0]][endCoords[1]]) return;
+      if (board[endCoords[0]][endCoords[1]].piece) return;
+
+      moves.push(endCoords);
+    });
+  });
+
+  return moves;
 }
 
 // lots and lots of tests
@@ -192,6 +299,7 @@ function canMoveIfTaking(
 
 // takes coords of two squares that are diagonal to each other with one square in between
 // returns the coords of the square in between
+// has a chance of returning a non existent square if passed squares that aren't two over in either direction
 function findMiddleSquare(
   startLocation: number[],
   endLocation: number[]
@@ -220,7 +328,7 @@ function setUpBoard(): void {
 }
 
 // returns array to go in board with pieces of color provided, no pieces if empty string provided
-function oddRow(pieceColor: string): Square[] {
+function oddRow(pieceColor: 'black' | 'red' | ''): Square[] {
   const row = [];
 
   for (let i = 0; i < 8; i++) {
@@ -239,7 +347,7 @@ function oddRow(pieceColor: string): Square[] {
 }
 
 // returns array to go in board with pieces of color provided, no pieces if empty string provided
-function evenRow(pieceColor: string): Square[] {
+function evenRow(pieceColor: 'black' | 'red' | ''): Square[] {
   const row = [];
 
   for (let i = 0; i < 8; i++) {
@@ -264,7 +372,7 @@ function evenRow(pieceColor: string): Square[] {
 }
 
 // loops through board in JS ands builds it in the dom
-function buildBoardInDom(): void {
+function renderBoard(): void {
   if (!$board) throw new Error('$board query failed');
 
   board.forEach((row, x) => {
@@ -302,17 +410,21 @@ function handleClick(event: Event): void {
   const $eventTarget = event.target as HTMLDivElement;
   const className = $eventTarget.className;
 
+  console.log(getCoords($eventTarget));
+
   if (className.includes('square')) {
     const pieceSelected = gameState.pieceSelected;
     if (!pieceSelected) return;
 
     const squareCoords = getCoords($eventTarget);
+
     if (canMoveWithoutTaking(pieceSelected, squareCoords)) {
       movePiece(pieceSelected, squareCoords);
       toggleTurn();
     } else if (canMoveIfTaking(pieceSelected, squareCoords)) {
       movePiece(pieceSelected, squareCoords);
       takePiece(findMiddleSquare(pieceSelected, squareCoords));
+      toggleTurn();
     }
   } else if (
     className.includes(gameState.turn) &&
@@ -331,18 +443,6 @@ function getCoords($square: HTMLDivElement): [number, number] {
   return coords.map((x) => +x) as [number, number];
 }
 
-// temporary solution to get typescript to quit giving me errors for not calling the functions
-function getTypescriptOffMyBack(): void {
-  movePiece([0, 0], [0, 0]);
-  takePiece([0, 0]);
-  kingPiece([0, 0]);
-  canMoveWithoutTaking([0, 0], [0, 0]);
-  canMoveIfTaking([0, 0], [0, 0]);
-  findMiddleSquare([0, 0], [0, 0]);
-  setUpBoard();
-  buildBoardInDom();
-}
-
 function toggleTurn(): void {
   if (gameState.turn === 'black') {
     gameState.turn = 'red';
@@ -353,12 +453,26 @@ function toggleTurn(): void {
   }
 }
 
+// if either black or red have no pieces in gameState, the other is declared winner
 function checkForWin(): void {
   if (!gameState.red) {
     console.log('Black Wins!');
   } else if (!gameState.black) {
     console.log('Red Wins!');
   }
+}
+
+// temporary solution to get typescript to quit giving me errors for not calling the functions
+function getTypescriptOffMyBack(): void {
+  movePiece([0, 0], [0, 0]);
+  takePiece([0, 0]);
+  kingPiece([0, 0]);
+  canMoveWithoutTaking([0, 0], [0, 0]);
+  canMoveIfTaking([0, 0], [0, 0]);
+  findMiddleSquare([0, 0], [0, 0]);
+  setUpBoard();
+  renderBoard();
+  getValidMoves([0, 0]);
 }
 
 console.log(getTypescriptOffMyBack);
