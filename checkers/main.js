@@ -54,7 +54,7 @@ function kingPiece(location) {
     piece.kinged = true;
   }
 }
-// has not been tested and probably has bugs
+// returns an array with all valid moves for a piece at provided coords
 function getValidMoves(coords) {
   if (coords[0] > 7 || coords[1] > 7)
     throw new Error(
@@ -115,10 +115,10 @@ function getValidMoves(coords) {
   if (jumpMoves.length) return jumpMoves;
   const columns = [];
   if (coords[1] + 1 <= 7) {
-    jumpColumns.push(coords[1] + 1);
+    columns.push(coords[1] + 1);
   }
   if (coords[1] - 1 >= 0) {
-    jumpColumns.push(coords[1] - 1);
+    columns.push(coords[1] - 1);
   }
   const rows = [];
   if (piece.kinged) {
@@ -317,7 +317,6 @@ function renderBoard() {
 function handleClick(event) {
   const $eventTarget = event.target;
   const className = $eventTarget.className;
-  console.log(getCoords($eventTarget));
   if (className.includes('square')) {
     const pieceSelected = gameState.pieceSelected;
     if (!pieceSelected) return;
