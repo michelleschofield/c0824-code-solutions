@@ -6,7 +6,9 @@ const gameState = {
 };
 const board = [[], [], [], [], [], [], [], []];
 const $board = document.querySelector('.board');
+const $turnDisplay = document.querySelector('#turn-display');
 if (!$board) throw new Error('$board query failed');
+if (!$turnDisplay) throw new Error('$turnDisplay query failed');
 setUpBoard();
 renderBoard();
 $board.addEventListener('click', handleClick);
@@ -48,7 +50,6 @@ function kingPiece(location) {
     piece.kinged = true;
   }
 }
-console.log(kingPiece);
 // returns an array with all valid moves for a piece at provided coords
 function getValidMoves(coords) {
   if (coords[0] > 7 || coords[1] > 7)
@@ -249,6 +250,7 @@ function handleClick(event) {
     if (!squareIsValidMove || !moveInfo) return;
     if (moveInfo.moveType === 'noJump') {
       movePiece(pieceSelected, squareCoords);
+      checkToKing(squareCoords);
       toggleTurn();
       gameState.pieceSelected = null;
       gameState.movesForSelectedPiece = null;
@@ -256,12 +258,16 @@ function handleClick(event) {
       const jumpedSquare = moveInfo.jumpedSquare;
       if (jumpedSquare) takePiece(jumpedSquare);
       movePiece(pieceSelected, squareCoords);
+      checkToKing(squareCoords);
       toggleTurn();
       const allMoves = getValidMoves(squareCoords);
       const jumpMoves = allMoves.filter(
         (moveInfo) => moveInfo.moveType === 'jump'
       );
-      gameState.movesForSelectedPiece = jumpMoves;
+      if (jumpMoves.length) {
+        gameState.movesForSelectedPiece = jumpMoves;
+        gameState.pieceSelected = squareCoords;
+      }
     }
   } else if (
     className.includes(gameState.turn) &&
@@ -288,10 +294,13 @@ function getCoords($square) {
   return coords.map((x) => +x);
 }
 function toggleTurn() {
+  if (!$turnDisplay) throw new Error('$turnDisplay non-existent');
   if (gameState.turn === 'black') {
     gameState.turn = 'red';
+    $turnDisplay.textContent = 'Reds turn';
   } else if (gameState.turn === 'red') {
     gameState.turn = 'black';
+    $turnDisplay.textContent = 'Blacks turn';
   } else {
     throw new Error('turn is neither black nor red');
   }
@@ -322,4 +331,13 @@ function getPieces(pieceType) {
     });
   });
   return allCoords;
+}
+function checkToKing(coords) {
+  const piece = board[coords[0]][coords[1]].piece;
+  if (!piece || piece.kinged) return;
+  if (piece.color === 'black' && coords[0] === 0) {
+    kingPiece(coords);
+  } else if (piece.color === 'red' && coords[0] === 7) {
+    kingPiece(coords);
+  }
 }

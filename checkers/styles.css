@@ -24,7 +24,7 @@
 }
 
 .square.red {
-  background-color: red;
+  background-color: rgb(172, 22, 22);
 }
 
 .square.black {
@@ -39,9 +39,9 @@
 }
 
 .piece.black {
-  background-color: white;
+  background-color: grey;
 }
 
 .piece.red {
-  background-color: rgb(172, 22, 22);
+  background-color: red;
 }
