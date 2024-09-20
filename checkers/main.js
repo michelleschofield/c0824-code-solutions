@@ -3,9 +3,6 @@ const gameState = {
   turn: 'black',
   pieceSelected: null,
   movesForSelectedPiece: null,
-  red: [],
-  black: [],
-  piecesAndMovesForTurn: [],
 };
 const board = [[], [], [], [], [], [], [], []];
 const $board = document.querySelector('.board');
@@ -40,19 +37,6 @@ function takePiece(location) {
   const $takenSquare = document.getElementById(`${location[0]},${location[1]}`);
   if (!$takenSquare) throw new Error('$takenSquare query failed');
   const $takenPiece = $takenSquare.children[0];
-  const color = piece.color;
-  const stringifiedLocation = JSON.stringify(location);
-  let index;
-  if (color === 'red' || color === 'black') {
-    gameState[color].forEach((coords, i) => {
-      if (JSON.stringify(coords) === stringifiedLocation) {
-        index = i;
-      }
-    });
-  }
-  if (index) {
-    gameState[color].splice(index, 1);
-  }
   delete board[location[0]][location[1]].piece;
   $takenPiece.remove();
   checkForWin();
@@ -74,7 +58,7 @@ function getValidMoves(coords) {
   const square = board[coords[0]][coords[1]];
   const piece = square.piece;
   if (!square.playable) throw new Error(`Square at ${coords} is not playable`);
-  if (!piece) return { moveType: '', moves: [] };
+  if (!piece) return [];
   let directionAllowed;
   if (piece.color === 'red') {
     directionAllowed = 1;
@@ -104,7 +88,7 @@ function getValidMoves(coords) {
       jumpRows.push(x);
     }
   }
-  const jumpMoves = [];
+  const allMoves = [];
   jumpRows.forEach((x) => {
     jumpColumns.forEach((y) => {
       const endCoords = [x, y];
@@ -119,16 +103,14 @@ function getValidMoves(coords) {
       }
       if (board[endCoords[0]][endCoords[1]].piece) return;
       if (attackedColor && attackedColor !== piece.color) {
-        jumpMoves.push(endCoords);
+        allMoves.push({
+          moveType: 'jump',
+          move: endCoords,
+          jumpedSquare: middleSquare,
+        });
       }
     });
   });
-  if (jumpMoves.length) {
-    return {
-      moveType: 'jump',
-      moves: jumpMoves,
-    };
-  }
   const columns = [];
   if (coords[1] + 1 <= 7) {
     columns.push(coords[1] + 1);
@@ -150,51 +132,16 @@ function getValidMoves(coords) {
       rows.push(x);
     }
   }
-  const moves = [];
   rows.forEach((x) => {
     columns.forEach((y) => {
       const endCoords = [x, y];
       if (!board[endCoords[0]][endCoords[1]]) return;
       if (board[endCoords[0]][endCoords[1]].piece) return;
-      moves.push(endCoords);
+      allMoves.push({ moveType: 'noJump', move: endCoords });
     });
   });
-  if (moves.length) {
-    return {
-      moveType: 'noJump',
-      moves,
-    };
-  } else {
-    return {
-      moveType: '',
-      moves: [],
-    };
-  }
-}
-// does not work and will not work until movePiece function is updated to update the arrays of pieces in gameState
-function getMovesForColor(color) {
-  const pieces = gameState[color];
-  let canJump = false;
-  const allMoves = [];
-  pieces.forEach((coords) => {
-    const movement = getValidMoves(coords);
-    if (movement.moveType === 'jump') {
-      canJump = true;
-      allMoves.push({ coords, movement });
-    } else if (!canJump && movement.moveType) {
-      allMoves.push({ coords, movement });
-    }
-  });
-  if (canJump) {
-    const jumpMovesOnly = allMoves.filter((obj) => {
-      if (obj.movement.moveType === 'jump') return obj;
-      return undefined;
-    });
-    console.log('jumpMovesOnly', jumpMovesOnly);
-  }
   return allMoves;
 }
-console.log(getMovesForColor);
 // takes coords of two squares that are diagonal to each other with one square in between
 // returns the coords of the square in between
 // has a chance of returning a non existent square if passed squares that aren't two over in either direction
@@ -214,14 +161,14 @@ function findMiddleSquare(startLocation, endLocation) {
 function setUpBoard() {
   for (let i = 0; i < 8; i++) {
     if (i % 2) {
-      board[i] = oddRow(i < 3 ? 'red' : i > 4 ? 'black' : '', i);
+      board[i] = oddRow(i < 3 ? 'red' : i > 4 ? 'black' : '');
     } else {
-      board[i] = evenRow(i < 3 ? 'red' : i > 4 ? 'black' : '', i);
+      board[i] = evenRow(i < 3 ? 'red' : i > 4 ? 'black' : '');
     }
   }
 }
 // returns array to go in board with pieces of color provided, no pieces if empty string provided
-function oddRow(pieceColor, x) {
+function oddRow(pieceColor) {
   const row = [];
   for (let i = 0; i < 8; i++) {
     const playable = !(i % 2);
@@ -231,14 +178,13 @@ function oddRow(pieceColor, x) {
         kinged: false,
         color: pieceColor,
       };
-      gameState[pieceColor].push([x, i]);
     }
     row.push(square);
   }
   return row;
 }
 // returns array to go in board with pieces of color provided, no pieces if empty string provided
-function evenRow(pieceColor, x) {
+function evenRow(pieceColor) {
   const row = [];
   for (let i = 0; i < 8; i++) {
     let playable;
@@ -253,7 +199,6 @@ function evenRow(pieceColor, x) {
         kinged: false,
         color: pieceColor,
       };
-      gameState[pieceColor].push([x, i]);
     }
     row.push(square);
   }
@@ -288,26 +233,35 @@ function handleClick(event) {
   const $eventTarget = event.target;
   const className = $eventTarget.className;
   if (className.includes('square')) {
-    const movementInfo = gameState.movesForSelectedPiece;
+    const moves = gameState.movesForSelectedPiece;
     const pieceSelected = gameState.pieceSelected;
-    if (!movementInfo || !pieceSelected) return;
+    if (!moves || !pieceSelected) return;
     const squareCoords = getCoords($eventTarget);
-    const validMoves = movementInfo.moves;
     const stringifiedCoords = JSON.stringify(squareCoords);
     let squareIsValidMove = false;
-    validMoves.forEach((move) => {
-      if (JSON.stringify(move) === stringifiedCoords) {
+    let moveInfo;
+    moves.forEach((move) => {
+      if (JSON.stringify(move.move) === stringifiedCoords) {
         squareIsValidMove = true;
+        moveInfo = move;
       }
     });
-    if (!squareIsValidMove) return;
-    if (movementInfo.moveType === 'noJump') {
+    if (!squareIsValidMove || !moveInfo) return;
+    if (moveInfo.moveType === 'noJump') {
       movePiece(pieceSelected, squareCoords);
       toggleTurn();
-    } else if (movementInfo.moveType === 'jump') {
+      gameState.pieceSelected = null;
+      gameState.movesForSelectedPiece = null;
+    } else if (moveInfo.moveType === 'jump') {
+      const jumpedSquare = moveInfo.jumpedSquare;
+      if (jumpedSquare) takePiece(jumpedSquare);
       movePiece(pieceSelected, squareCoords);
-      takePiece(findMiddleSquare(pieceSelected, squareCoords));
       toggleTurn();
+      const allMoves = getValidMoves(squareCoords);
+      const jumpMoves = allMoves.filter(
+        (moveInfo) => moveInfo.moveType === 'jump'
+      );
+      gameState.movesForSelectedPiece = jumpMoves;
     }
   } else if (
     className.includes(gameState.turn) &&
@@ -344,9 +298,28 @@ function toggleTurn() {
 }
 // if either black or red have no pieces in gameState, the other is declared winner
 function checkForWin() {
-  if (!gameState.red.length) {
-    console.log('Black Wins!');
-  } else if (!gameState.black.length) {
-    console.log('Red Wins!');
+  const redPieces = getPieces('red');
+  if (!redPieces.length) {
+    console.log('black wins!');
+    return;
   }
+  const blackPieces = getPieces('black');
+  if (!blackPieces.length) {
+    console.log('red wins!');
+    return;
+  }
+}
+function getPieces(pieceType) {
+  const allCoords = [];
+  board.forEach((row, x) => {
+    row.forEach((square, y) => {
+      const piece = square.piece;
+      if (piece) {
+        if (piece.color === pieceType || pieceType === 'all') {
+          allCoords.push([x, y]);
+        }
+      }
+    });
+  });
+  return allCoords;
 }
