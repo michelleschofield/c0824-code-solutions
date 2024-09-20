@@ -276,9 +276,6 @@ function handleClick(event) {
       const pieceColor = board[squareCoords[0]][squareCoords[1]].piece?.color;
       if (!pieceColor)
         throw new Error(`piece at ${pieceSelected} doesn't have a color`);
-      if (pieceColor === gameState.turn) {
-        toggleTurn();
-      }
       const allMoves = getValidMoves(squareCoords);
       const jumpMoves = allMoves.filter(
         (moveInfo) => moveInfo.moveType === 'jump'
@@ -286,11 +283,13 @@ function handleClick(event) {
       if (jumpMoves.length) {
         gameState.movesForSelectedPiece = jumpMoves;
         gameState.pieceSelected = squareCoords;
+        toggleTurn('dblJump');
       } else {
         const $piece = $eventTarget.firstChild;
         if ($piece) {
           $piece.className = `piece ${pieceColor}`;
         }
+        toggleTurn();
         gameState.pieceSelected = null;
         gameState.movesForSelectedPiece = null;
       }
@@ -320,14 +319,20 @@ function getCoords($square) {
   const coords = stringCoords.split(',');
   return coords.map((x) => +x);
 }
-function toggleTurn() {
+function toggleTurn(doubleJump) {
   if (!$turnDisplay) throw new Error('$turnDisplay non-existent');
   if (gameState.turn === 'black') {
     gameState.turn = 'red';
     $turnDisplay.textContent = 'Reds turn';
+    if (doubleJump) {
+      $turnDisplay.textContent += ' or black can double jump';
+    }
   } else if (gameState.turn === 'red') {
     gameState.turn = 'black';
     $turnDisplay.textContent = 'Blacks turn';
+    if (doubleJump) {
+      $turnDisplay.textContent += ' or red can double jump';
+    }
   } else {
     throw new Error('turn is neither black nor red');
   }
