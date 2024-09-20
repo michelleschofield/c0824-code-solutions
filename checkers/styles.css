@@ -79,3 +79,7 @@ dialog::backdrop {
 .selected {
   box-shadow: 0 0 10px 5px white;
 }
+
+.clickable:hover {
+  cursor: pointer;
+}

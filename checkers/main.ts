@@ -44,7 +44,7 @@ renderBoard();
 $board.addEventListener('click', handleClick);
 $playAgain.addEventListener('click', reset);
 
-// $board.addEventListener('mouseover', handleMouseover);
+$board.addEventListener('mouseover', handleMouseover);
 
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
 // only checks for existence of piece to be moved doesn't care about rules
@@ -414,14 +414,18 @@ function handleClick(event: Event): void {
   }
 }
 
-// function handleMouseover(event: Event): void {
-//   const $eventTarget = event.target as HTMLElement;
-//   if (!$eventTarget.className.includes('piece')) return;
-//   const $square = $eventTarget.parentElement as HTMLDivElement;
-//   const pieceCoords = getCoords($square);
-//   const validMoves = getValidMoves(pieceCoords);
-//   console.log('validMoves', validMoves);
-// }
+function handleMouseover(event: Event): void {
+  const $eventTarget = event.target as HTMLElement;
+
+  if ($eventTarget.className.includes(`piece ${gameState.turn}`)) {
+    console.log('is piece of turn color');
+
+    // const $square = $eventTarget.parentElement as HTMLDivElement;
+    // const pieceCoords = getCoords($square);
+    // const validMoves = getValidMoves(pieceCoords);
+    // console.log('validMoves', validMoves);
+  }
+}
 
 function getCoords($square: HTMLDivElement): [number, number] {
   const stringCoords = $square?.id;
