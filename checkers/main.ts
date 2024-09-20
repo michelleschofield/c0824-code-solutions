@@ -357,6 +357,12 @@ function handleClick(event: Event): void {
     if (moveInfo.moveType === 'noJump') {
       movePiece(pieceSelected, squareCoords);
       checkToKing(squareCoords);
+
+      const $piece = $eventTarget.firstChild as HTMLDivElement;
+      if ($piece) {
+        $piece.className = `piece ${gameState.turn}`;
+      }
+
       toggleTurn();
 
       gameState.pieceSelected = null;
@@ -385,6 +391,11 @@ function handleClick(event: Event): void {
         gameState.movesForSelectedPiece = jumpMoves;
         gameState.pieceSelected = squareCoords;
       } else {
+        const $piece = $eventTarget.firstChild as HTMLDivElement;
+        if ($piece) {
+          $piece.className = `piece ${pieceColor}`;
+        }
+
         gameState.pieceSelected = null;
         gameState.movesForSelectedPiece = null;
       }
@@ -396,6 +407,8 @@ function handleClick(event: Event): void {
     const $square = $eventTarget.parentElement as HTMLDivElement;
     const pieceCoords = getCoords($square);
     const movementInfo = getValidMoves(pieceCoords);
+
+    $eventTarget.className += ' selected';
 
     gameState.pieceSelected = pieceCoords;
     gameState.movesForSelectedPiece = movementInfo;
@@ -436,21 +449,21 @@ function toggleTurn(): void {
 function checkForWin(): void {
   const $victoryMessage = document.createElement('h2');
   if (!$gameOver) throw new Error('$gameOver does not exist');
-  $gameOver.prepend($victoryMessage);
-  $gameOver.showModal();
+  const blackPieces = getPieces('black');
 
   const redPieces = getPieces('red');
   if (!redPieces.length) {
     $victoryMessage.textContent = 'Black Wins!';
     console.log('black wins!');
-    return;
-  }
 
-  const blackPieces = getPieces('black');
-  if (!blackPieces.length) {
+    $gameOver.prepend($victoryMessage);
+    $gameOver.showModal();
+  } else if (!blackPieces.length) {
     $victoryMessage.textContent = 'Red Wins!';
     console.log('red wins!');
-    return;
+
+    $gameOver.prepend($victoryMessage);
+    $gameOver.showModal();
   }
 }
 
