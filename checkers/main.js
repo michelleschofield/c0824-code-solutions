@@ -12,7 +12,7 @@ if (!$turnDisplay) throw new Error('$turnDisplay query failed');
 setUpBoard();
 renderBoard();
 $board.addEventListener('click', handleClick);
-$board.addEventListener('mouseover', handleMouseover);
+// $board.addEventListener('mouseover', handleMouseover);
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
 // only checks for existence of piece to be moved doesn't care about rules
 function movePiece(startLocation, endLocation) {
@@ -259,7 +259,12 @@ function handleClick(event) {
       if (jumpedSquare) takePiece(jumpedSquare);
       movePiece(pieceSelected, squareCoords);
       checkToKing(squareCoords);
-      toggleTurn();
+      const pieceColor = board[squareCoords[0]][squareCoords[1]].piece?.color;
+      if (!pieceColor)
+        throw new Error(`piece at ${pieceSelected} doesn't have a color`);
+      if (pieceColor === gameState.turn) {
+        toggleTurn();
+      }
       const allMoves = getValidMoves(squareCoords);
       const jumpMoves = allMoves.filter(
         (moveInfo) => moveInfo.moveType === 'jump'
@@ -267,6 +272,9 @@ function handleClick(event) {
       if (jumpMoves.length) {
         gameState.movesForSelectedPiece = jumpMoves;
         gameState.pieceSelected = squareCoords;
+      } else {
+        gameState.pieceSelected = null;
+        gameState.movesForSelectedPiece = null;
       }
     }
   } else if (
@@ -279,15 +287,16 @@ function handleClick(event) {
     gameState.pieceSelected = pieceCoords;
     gameState.movesForSelectedPiece = movementInfo;
   }
+  console.log('gameState', gameState);
 }
-function handleMouseover(event) {
-  const $eventTarget = event.target;
-  if (!$eventTarget.className.includes('piece')) return;
-  const $square = $eventTarget.parentElement;
-  const pieceCoords = getCoords($square);
-  const validMoves = getValidMoves(pieceCoords);
-  console.log('validMoves', validMoves);
-}
+// function handleMouseover(event: Event): void {
+//   const $eventTarget = event.target as HTMLElement;
+//   if (!$eventTarget.className.includes('piece')) return;
+//   const $square = $eventTarget.parentElement as HTMLDivElement;
+//   const pieceCoords = getCoords($square);
+//   const validMoves = getValidMoves(pieceCoords);
+//   console.log('validMoves', validMoves);
+// }
 function getCoords($square) {
   const stringCoords = $square?.id;
   const coords = stringCoords.split(',');
