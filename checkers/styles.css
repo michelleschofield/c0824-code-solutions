@@ -32,16 +32,46 @@
 }
 
 .piece {
-  width: 80%;
-  height: 80%;
+  width: 70%;
+  height: 70%;
   border-radius: 50%;
-  border-width: 3px;
+  border: solid 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5rem;
 }
 
 .piece.black {
-  background-color: grey;
+  background-color: rgb(33, 33, 33);
+  border-color: rgb(104, 104, 104);
+  color: white;
 }
 
 .piece.red {
-  background-color: red;
+  border-color: red;
+  background-color: rgb(172, 22, 22);
+  color: black;
+}
+
+.game-over {
+  text-align: center;
+  background-color: rgb(226, 226, 226);
+  border: none;
+  border-radius: 1rem;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.button {
+  background-color: rebeccapurple;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.button:hover {
+  cursor: pointer;
 }

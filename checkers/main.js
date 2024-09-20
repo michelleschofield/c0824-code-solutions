@@ -7,11 +7,16 @@ const gameState = {
 const board = [[], [], [], [], [], [], [], []];
 const $board = document.querySelector('.board');
 const $turnDisplay = document.querySelector('#turn-display');
+const $gameOver = document.querySelector('dialog');
+const $playAgain = document.querySelector('#play-again');
 if (!$board) throw new Error('$board query failed');
 if (!$turnDisplay) throw new Error('$turnDisplay query failed');
+if (!$gameOver) throw new Error('$gameOver query failed');
+if (!$playAgain) throw new Error('$playAgain query failed');
 setUpBoard();
 renderBoard();
 $board.addEventListener('click', handleClick);
+$playAgain.addEventListener('click', reset);
 // $board.addEventListener('mouseover', handleMouseover);
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
 // only checks for existence of piece to be moved doesn't care about rules
@@ -49,6 +54,11 @@ function kingPiece(location) {
   if (piece) {
     piece.kinged = true;
   }
+  const $piece = document.getElementById(`${location[0]},${location[1]}`);
+  if (!$piece) throw new Error('$piece query failed');
+  const $crown = document.createElement('i');
+  $crown.className = 'fa-solid fa-crown';
+  $piece.firstChild?.appendChild($crown);
 }
 // returns an array with all valid moves for a piece at provided coords
 function getValidMoves(coords) {
@@ -287,7 +297,6 @@ function handleClick(event) {
     gameState.pieceSelected = pieceCoords;
     gameState.movesForSelectedPiece = movementInfo;
   }
-  console.log('gameState', gameState);
 }
 // function handleMouseover(event: Event): void {
 //   const $eventTarget = event.target as HTMLElement;
@@ -316,13 +325,19 @@ function toggleTurn() {
 }
 // if either black or red have no pieces in gameState, the other is declared winner
 function checkForWin() {
+  const $victoryMessage = document.createElement('h2');
+  if (!$gameOver) throw new Error('$gameOver does not exist');
+  $gameOver.prepend($victoryMessage);
+  $gameOver.showModal();
   const redPieces = getPieces('red');
   if (!redPieces.length) {
+    $victoryMessage.textContent = 'Black Wins!';
     console.log('black wins!');
     return;
   }
   const blackPieces = getPieces('black');
   if (!blackPieces.length) {
+    $victoryMessage.textContent = 'Red Wins!';
     console.log('red wins!');
     return;
   }
@@ -349,4 +364,19 @@ function checkToKing(coords) {
   } else if (piece.color === 'red' && coords[0] === 7) {
     kingPiece(coords);
   }
+}
+// function forceGameOver(loser: 'black' | 'red'): void {
+//   const pieces = getPieces(loser);
+//   pieces.forEach((piece) => {
+//     takePiece(piece);
+//   });
+// }
+function reset() {
+  setUpBoard();
+  gameState.turn = 'black';
+  gameState.pieceSelected = null;
+  gameState.movesForSelectedPiece = null;
+  $board?.replaceChildren();
+  renderBoard();
+  $gameOver?.close();
 }
