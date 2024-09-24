@@ -3,7 +3,8 @@
 }
 
 .image-wrapper {
-  width: 475px;
+  width: 350px;
+  margin: 0 2rem;
 }
 
 .row {
@@ -17,4 +18,23 @@
 
 .dots-row {
   justify-content: center;
+}
+
+.arrow {
+  font-size: 2rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 50%;
+}
+
+.arrow:hover {
+  cursor: pointer;
+  background-color: aliceblue;
+}
+
+.fa-circle {
+  padding: 0.25rem;
+}
+
+.fa-circle:hover {
+  cursor: pointer;
 }
