@@ -405,15 +405,30 @@ function handleClick(event: Event): void {
         gameState.doubleJump = null;
       }
     }
-  } else if (
-    className.includes(gameState.turn) &&
-    className.includes('piece')
-  ) {
-    const $square = $eventTarget.parentElement as HTMLDivElement;
+    return;
+  }
+
+  let $piece;
+  if (className.includes(gameState.turn) && className.includes('piece')) {
+    $piece = $eventTarget;
+  } else if ($eventTarget.tagName === 'I') {
+    $piece = $eventTarget.parentElement as HTMLDivElement;
+    if (!$piece.className.includes(gameState.turn)) {
+      $piece = null;
+    }
+  }
+
+  if ($piece) {
+    const $selectedPiece = document.querySelector('.selected');
+    if ($selectedPiece) {
+      $selectedPiece.className = `piece ${gameState.turn}`;
+    }
+
+    const $square = $piece.parentElement as HTMLDivElement;
     const pieceCoords = getCoords($square);
     const movementInfo = getValidMoves(pieceCoords);
 
-    $eventTarget.className += ' selected';
+    $piece.className += ' selected';
 
     gameState.pieceSelected = pieceCoords;
     gameState.movesForSelectedPiece = movementInfo;
