@@ -423,7 +423,7 @@ function handleClick(event: Event): void {
   if ($piece) {
     const $selectedPiece = document.querySelector('.selected');
     if ($selectedPiece) {
-      $selectedPiece.className = `piece ${gameState.turn}`;
+      $selectedPiece.className = $selectedPiece.className.slice(0, -8);
     }
 
     const $square = $piece.parentElement as HTMLDivElement;
@@ -434,6 +434,7 @@ function handleClick(event: Event): void {
 
     gameState.pieceSelected = pieceCoords;
     gameState.movesForSelectedPiece = movementInfo;
+    gameState.doubleJump = null;
   }
 }
 

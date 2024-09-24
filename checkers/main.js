@@ -314,7 +314,7 @@ function handleClick(event) {
   if ($piece) {
     const $selectedPiece = document.querySelector('.selected');
     if ($selectedPiece) {
-      $selectedPiece.className = `piece ${gameState.turn}`;
+      $selectedPiece.className = $selectedPiece.className.slice(0, -8);
     }
     const $square = $piece.parentElement;
     const pieceCoords = getCoords($square);
@@ -322,6 +322,7 @@ function handleClick(event) {
     $piece.className += ' selected';
     gameState.pieceSelected = pieceCoords;
     gameState.movesForSelectedPiece = movementInfo;
+    gameState.doubleJump = null;
   }
 }
 function handleMouseover(event) {
