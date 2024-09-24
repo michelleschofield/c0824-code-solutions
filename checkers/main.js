@@ -10,10 +10,12 @@ const $board = document.querySelector('.board');
 const $turnDisplay = document.querySelector('#turn-display');
 const $gameOver = document.querySelector('dialog');
 const $playAgain = document.querySelector('#play-again');
+const $victoryMessage = document.querySelector('#victory-message');
 if (!$board) throw new Error('$board query failed');
 if (!$turnDisplay) throw new Error('$turnDisplay query failed');
 if (!$gameOver) throw new Error('$gameOver query failed');
 if (!$playAgain) throw new Error('$playAgain query failed');
+if (!$victoryMessage) throw new Error('$victoryMessage query failed');
 setUpBoard();
 renderBoard();
 $board.addEventListener('click', handleClick);
@@ -37,6 +39,7 @@ function movePiece(startLocation, endLocation) {
   board[endLocation[0]][endLocation[1]].piece = piece;
   $endSquare.appendChild($piece);
   delete board[startLocation[0]][startLocation[1]].piece;
+  checkForWin();
 }
 // deletes piece at given location and removes the matching coords from the array for the color of the piece in gameState
 function takePiece(location) {
@@ -47,7 +50,6 @@ function takePiece(location) {
   const $takenPiece = $takenSquare.children[0];
   delete board[location[0]][location[1]].piece;
   $takenPiece.remove();
-  checkForWin();
 }
 // sets piece at given location to kinged
 function kingPiece(location) {
@@ -358,21 +360,41 @@ function otherColor(color) {
 }
 // if either black or red have no pieces in gameState, the other is declared winner
 function checkForWin() {
-  const $victoryMessage = document.createElement('h2');
-  if (!$gameOver) throw new Error('$gameOver does not exist');
-  const blackPieces = getPieces('black');
   const redPieces = getPieces('red');
   if (!redPieces.length) {
-    $victoryMessage.textContent = 'Black Wins!';
-    console.log('black wins!');
-    $gameOver.prepend($victoryMessage);
-    $gameOver.showModal();
-  } else if (!blackPieces.length) {
-    $victoryMessage.textContent = 'Red Wins!';
-    console.log('red wins!');
-    $gameOver.prepend($victoryMessage);
-    $gameOver.showModal();
+    win('black');
+    return;
   }
+  const blackPieces = getPieces('black');
+  if (!blackPieces.length) {
+    win('red');
+    return;
+  }
+  const redMovesNested = [];
+  redPieces.forEach((piece) => {
+    redMovesNested.push(getValidMoves(piece));
+  });
+  const redMovesFlat = redMovesNested.flat();
+  if (!redMovesFlat.length) {
+    win('black');
+    return;
+  }
+  const blackMovesNested = [];
+  blackPieces.forEach((piece) => {
+    blackMovesNested.push(getValidMoves(piece));
+  });
+  const blackMovesFlat = blackMovesNested.flat();
+  if (!blackMovesFlat.length) {
+    win('red');
+    return;
+  }
+}
+function win(color) {
+  if (!$gameOver) throw new Error('$gameOver does not exist');
+  if (!$victoryMessage) throw new Error('$victoryMessage does not exist');
+  const capitalizedColor = color[0].toUpperCase() + color.slice(1);
+  $victoryMessage.textContent = `${capitalizedColor} Wins!`;
+  $gameOver.showModal();
 }
 function getPieces(pieceType) {
   const allCoords = [];
