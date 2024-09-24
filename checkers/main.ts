@@ -391,7 +391,7 @@ function handleClick(event: Event): void {
         gameState.pieceSelected = squareCoords;
         gameState.doubleJump = `${pieceColor}`;
 
-        toggleTurn('dblJump');
+        toggleTurn(pieceColor);
       } else {
         const $piece = $eventTarget.firstChild as HTMLDivElement;
         if ($piece) {
@@ -455,16 +455,17 @@ function getCoords($square: HTMLDivElement): [number, number] {
   return coords.map((x) => +x) as [number, number];
 }
 
-function toggleTurn(dblJump?: string): void {
+function toggleTurn(dblJump?: 'red' | 'black'): void {
   if (!$turnDisplay) throw new Error('$turnDisplay non-existent');
 
   gameState.turn = otherColor(gameState.turn);
   $turnDisplay.textContent = `${gameState.turn}s turn`;
 
   if (dblJump) {
-    $turnDisplay.textContent = `${otherColor(
-      gameState.turn
-    )} can double jump or ${gameState.turn} can play`;
+    gameState.turn = otherColor(dblJump);
+    $turnDisplay.textContent = `${dblJump} can jump again or ${otherColor(
+      dblJump
+    )} can play`;
   } else if (gameState.doubleJump) {
     gameState.turn = otherColor(gameState.turn);
     $turnDisplay.textContent = `${gameState.turn}s turn`;
