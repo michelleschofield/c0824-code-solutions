@@ -1,0 +1,20 @@
+.image {
+  width: 100%;
+}
+
+.image-wrapper {
+  width: 475px;
+}
+
+.row {
+  display: flex;
+}
+
+.main {
+  align-items: center;
+  justify-content: center;
+}
+
+.dots-row {
+  justify-content: center;
+}
