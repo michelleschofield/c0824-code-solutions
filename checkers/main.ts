@@ -16,6 +16,7 @@ interface MoveInfo {
 
 interface GameState {
   turn: 'black' | 'red';
+  doubleJump: 'black' | 'red' | null;
   pieceSelected: [number, number] | null;
   movesForSelectedPiece: MoveInfo[] | null;
 }
@@ -24,6 +25,7 @@ const gameState: GameState = {
   turn: 'black',
   pieceSelected: null,
   movesForSelectedPiece: null,
+  doubleJump: null,
 };
 
 const board: Square[][] = [[], [], [], [], [], [], [], []];
@@ -367,6 +369,7 @@ function handleClick(event: Event): void {
 
       gameState.pieceSelected = null;
       gameState.movesForSelectedPiece = null;
+      gameState.doubleJump = null;
     } else if (moveInfo.moveType === 'jump') {
       const jumpedSquare = moveInfo.jumpedSquare;
       if (jumpedSquare) takePiece(jumpedSquare);
@@ -386,6 +389,8 @@ function handleClick(event: Event): void {
       if (jumpMoves.length) {
         gameState.movesForSelectedPiece = jumpMoves;
         gameState.pieceSelected = squareCoords;
+        gameState.doubleJump = `${pieceColor}`;
+
         toggleTurn('dblJump');
       } else {
         const $piece = $eventTarget.firstChild as HTMLDivElement;
@@ -397,6 +402,7 @@ function handleClick(event: Event): void {
 
         gameState.pieceSelected = null;
         gameState.movesForSelectedPiece = null;
+        gameState.doubleJump = null;
       }
     }
   } else if (
@@ -434,26 +440,26 @@ function getCoords($square: HTMLDivElement): [number, number] {
   return coords.map((x) => +x) as [number, number];
 }
 
-function toggleTurn(doubleJump?: string): void {
+function toggleTurn(dblJump?: string): void {
   if (!$turnDisplay) throw new Error('$turnDisplay non-existent');
 
-  if (gameState.turn === 'black') {
-    gameState.turn = 'red';
-    $turnDisplay.textContent = 'Reds turn';
+  gameState.turn = otherColor(gameState.turn);
+  $turnDisplay.textContent = `${gameState.turn}s turn`;
 
-    if (doubleJump) {
-      $turnDisplay.textContent += ' or black can double jump';
-    }
-  } else if (gameState.turn === 'red') {
-    gameState.turn = 'black';
-    $turnDisplay.textContent = 'Blacks turn';
-
-    if (doubleJump) {
-      $turnDisplay.textContent += ' or red can double jump';
-    }
-  } else {
-    throw new Error('turn is neither black nor red');
+  if (dblJump) {
+    $turnDisplay.textContent = `${otherColor(
+      gameState.turn
+    )} can double jump or ${gameState.turn} can play`;
+  } else if (gameState.doubleJump) {
+    gameState.turn = otherColor(gameState.turn);
+    $turnDisplay.textContent = `${gameState.turn}s turn`;
   }
+}
+
+function otherColor(color: 'red' | 'black'): 'red' | 'black' {
+  if (color === 'red') return 'black';
+  if (color === 'black') return 'red';
+  else throw new Error(`cannot get opposite color of ${color}`);
 }
 
 // if either black or red have no pieces in gameState, the other is declared winner
