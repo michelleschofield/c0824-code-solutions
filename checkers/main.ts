@@ -338,75 +338,7 @@ function handleClick(event: Event): void {
   const className = $eventTarget.className;
 
   if (className.includes('square')) {
-    const moves = gameState.movesForSelectedPiece;
-    const pieceSelected = gameState.pieceSelected;
-
-    if (!moves || !pieceSelected) return;
-
-    const squareCoords = getCoords($eventTarget);
-    const stringifiedCoords = JSON.stringify(squareCoords);
-
-    let squareIsValidMove = false;
-    let moveInfo: MoveInfo | undefined;
-
-    moves.forEach((move) => {
-      if (JSON.stringify(move.move) === stringifiedCoords) {
-        squareIsValidMove = true;
-        moveInfo = move;
-      }
-    });
-
-    if (!squareIsValidMove || !moveInfo) return;
-
-    if (moveInfo.moveType === 'noJump') {
-      movePiece(pieceSelected, squareCoords);
-      checkToKing(squareCoords);
-
-      const $piece = $eventTarget.firstChild as HTMLDivElement;
-      if ($piece) {
-        $piece.className = `piece ${gameState.turn}`;
-      }
-
-      toggleTurn();
-
-      gameState.pieceSelected = null;
-      gameState.movesForSelectedPiece = null;
-      gameState.doubleJump = null;
-    } else if (moveInfo.moveType === 'jump') {
-      const jumpedSquare = moveInfo.jumpedSquare;
-      if (jumpedSquare) takePiece(jumpedSquare);
-
-      movePiece(pieceSelected, squareCoords);
-      checkToKing(squareCoords);
-
-      const pieceColor = board[squareCoords[0]][squareCoords[1]].piece?.color;
-      if (!pieceColor)
-        throw new Error(`piece at ${pieceSelected} doesn't have a color`);
-
-      const allMoves = getValidMoves(squareCoords);
-      const jumpMoves = allMoves.filter(
-        (moveInfo) => moveInfo.moveType === 'jump'
-      );
-
-      if (jumpMoves.length) {
-        gameState.movesForSelectedPiece = jumpMoves;
-        gameState.pieceSelected = squareCoords;
-        gameState.doubleJump = `${pieceColor}`;
-
-        toggleTurn(pieceColor);
-      } else {
-        const $piece = $eventTarget.firstChild as HTMLDivElement;
-        if ($piece) {
-          $piece.className = `piece ${pieceColor}`;
-        }
-
-        toggleTurn();
-
-        gameState.pieceSelected = null;
-        gameState.movesForSelectedPiece = null;
-        gameState.doubleJump = null;
-      }
-    }
+    squareClicked($eventTarget);
     return;
   }
 
@@ -421,20 +353,102 @@ function handleClick(event: Event): void {
   }
 
   if ($piece) {
-    const $selectedPiece = document.querySelector('.selected');
-    if ($selectedPiece) {
-      $selectedPiece.className = $selectedPiece.className.slice(0, -8);
-    }
+    pieceClicked($piece);
+  }
+}
 
-    const $square = $piece.parentElement as HTMLDivElement;
-    const pieceCoords = getCoords($square);
-    const movementInfo = getValidMoves(pieceCoords);
+function pieceClicked($piece: HTMLDivElement): void {
+  const $square = $piece.parentElement as HTMLDivElement;
+  const pieceCoords = getCoords($square);
+  const movementInfo = getValidMoves(pieceCoords);
+
+  if (movementInfo.length) {
+    deselect();
 
     $piece.className += ' selected';
 
     gameState.pieceSelected = pieceCoords;
     gameState.movesForSelectedPiece = movementInfo;
     gameState.doubleJump = null;
+  }
+}
+
+function deselect(): void {
+  const $selectedPiece = document.querySelector('.selected');
+  if ($selectedPiece) {
+    $selectedPiece.className = $selectedPiece.className.slice(0, -8);
+  }
+
+  gameState.pieceSelected = null;
+  gameState.movesForSelectedPiece = null;
+  gameState.doubleJump = null;
+}
+
+function squareClicked($eventTarget: HTMLDivElement): void {
+  const { movesForSelectedPiece: possibleMoves, pieceSelected } = gameState;
+
+  if (!possibleMoves || !pieceSelected) return;
+
+  const squareCoords = getCoords($eventTarget);
+  const stringifiedCoords = JSON.stringify(squareCoords);
+
+  let squareIsValidMove = false;
+  let moveInfo: MoveInfo | undefined;
+
+  possibleMoves.forEach((move) => {
+    if (JSON.stringify(move.move) === stringifiedCoords) {
+      squareIsValidMove = true;
+      moveInfo = move;
+    }
+  });
+
+  if (squareIsValidMove && moveInfo) {
+    if (moveInfo.moveType === 'noJump') {
+      playNoJump(pieceSelected, squareCoords);
+    } else if (moveInfo.moveType === 'jump') {
+      if (!moveInfo.jumpedSquare)
+        throw new Error(`${pieceSelected} cannot jump without a jumped square`);
+      playJump(pieceSelected, squareCoords, moveInfo.jumpedSquare);
+    }
+  }
+}
+
+function playNoJump(
+  startCoords: [number, number],
+  endCoords: [number, number]
+): void {
+  movePiece(startCoords, endCoords);
+  checkToKing(endCoords);
+  toggleTurn();
+  deselect();
+}
+
+function playJump(
+  startCoords: [number, number],
+  endCoords: [number, number],
+  jumpedCoords: [number, number]
+): void {
+  takePiece(jumpedCoords);
+
+  movePiece(startCoords, endCoords);
+  checkToKing(endCoords);
+
+  const pieceColor = board[endCoords[0]][endCoords[1]].piece?.color;
+  if (!pieceColor)
+    throw new Error(`piece at ${endCoords} doesn't have a color`);
+
+  const allMoves = getValidMoves(endCoords);
+  const jumpMoves = allMoves.filter((moveInfo) => moveInfo.moveType === 'jump');
+
+  if (jumpMoves.length) {
+    gameState.movesForSelectedPiece = jumpMoves;
+    gameState.pieceSelected = endCoords;
+    gameState.doubleJump = `${pieceColor}`;
+
+    toggleTurn(pieceColor);
+  } else {
+    toggleTurn();
+    deselect();
   }
 }
 
