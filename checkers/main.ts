@@ -111,10 +111,11 @@ function kingPiece(location: [number, number]): void {
 
 // returns an array with all valid moves for a piece at provided coords
 function getValidMoves(coords: [number, number]): MoveInfo[] {
-  if (coords[0] > 7 || coords[1] > 7)
+  if (coords[0] > 7 || coords[1] > 7 || coords[0] < 0 || coords[1] < 0) {
     throw new Error(
       `Cannot get moves for ${coords} because square does not exist`
     );
+  }
 
   const square = board[coords[0]][coords[1]];
   const piece = square.piece;
@@ -212,16 +213,37 @@ function getValidMoves(coords: [number, number]): MoveInfo[] {
 
   rows.forEach((x) => {
     columns.forEach((y) => {
-      const endCoords: [number, number] = [x, y];
+      if (!board[x][y] || board[x][y].piece) return;
 
-      if (!board[endCoords[0]][endCoords[1]]) return;
-      if (board[endCoords[0]][endCoords[1]].piece) return;
-
-      allMoves.push({ moveType: 'noJump', move: endCoords });
+      allMoves.push({ moveType: 'noJump', move: [x, y] });
     });
   });
 
   return allMoves;
+}
+
+function getColumns(coords: [number, number], distance: number): number[] {
+  const columns = [];
+  if (coords[1] + distance <= 7) {
+    columns.push(coords[1] + distance);
+  }
+  if (coords[1] - distance >= 0) {
+    columns.push(coords[1] - distance);
+  }
+  return columns;
+}
+
+function getEmptySquares(
+  rows: number[],
+  columns: number[]
+): [number, number][] {
+  const emptySquares: [number, number][] = [];
+  rows.forEach((x) => {
+    columns.forEach((y) => {
+      if (!board[x][y].piece) emptySquares.push([x, y]);
+    });
+  });
+  return emptySquares;
 }
 
 // takes coords of two squares that are diagonal to each other with one square in between
