@@ -48,8 +48,6 @@ renderBoard();
 $board.addEventListener('click', handleClick);
 $playAgain.addEventListener('click', reset);
 
-// $board.addEventListener('mouseover', handleMouseover);
-
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
 // only checks for existence of piece to be moved doesn't care about rules
 function movePiece(
@@ -123,96 +121,40 @@ function getValidMoves(coords: [number, number]): MoveInfo[] {
   if (!square.playable) throw new Error(`Square at ${coords} is not playable`);
   if (!piece) return [];
 
-  let directionAllowed;
-  if (piece.color === 'red') {
-    directionAllowed = 1;
-  } else if (piece.color === 'black') {
-    directionAllowed = -1;
-  } else {
-    throw new Error(`${piece.color} is not a valid piece color`);
-  }
-
-  const jumpColumns: number[] = [];
-  if (coords[1] + 2 <= 7) {
-    jumpColumns.push(coords[1] + 2);
-  }
-  if (coords[1] - 2 >= 0) {
-    jumpColumns.push(coords[1] - 2);
-  }
-
-  const jumpRows: number[] = [];
-
-  if (piece.kinged) {
-    if (coords[0] + 2 <= 7) {
-      jumpRows.push(coords[0] + 2);
-    }
-    if (coords[0] - 2 >= 0) {
-      jumpRows.push(coords[0] - 2);
-    }
-  } else {
-    const x = coords[0] + directionAllowed * 2;
-    if (x >= 0 && x <= 7) {
-      jumpRows.push(x);
-    }
-  }
+  const jumpColumns = getColumns(coords, 2);
+  const jumpRows = getRows(coords, 2);
 
   const allMoves: MoveInfo[] = [];
 
   jumpRows.forEach((x) => {
     jumpColumns.forEach((y) => {
-      const endCoords: [number, number] = [x, y];
+      if (!board[x][y] || board[x][y].piece) return;
 
-      if (!board[endCoords[0]][endCoords[1]]) return;
-
-      const middleSquare = findMiddleSquare(coords, endCoords);
+      const middleSquare = findMiddleSquare(coords, [x, y]);
       const attackedPiece = board[middleSquare[0]][middleSquare[1]].piece;
-      let attackedColor;
 
+      let attackedColor;
       if (attackedPiece) {
         attackedColor = attackedPiece.color;
       } else {
         return;
       }
 
-      if (board[endCoords[0]][endCoords[1]].piece) return;
-
       if (attackedColor && attackedColor !== piece.color) {
         allMoves.push({
           moveType: 'jump',
-          move: endCoords,
+          move: [x, y],
           jumpedSquare: middleSquare,
         });
       }
     });
   });
 
-  const columns: number[] = [];
+  const regColumns = getColumns(coords, 1);
+  const regRows = getRows(coords, 1);
 
-  if (coords[1] + 1 <= 7) {
-    columns.push(coords[1] + 1);
-  }
-  if (coords[1] - 1 >= 0) {
-    columns.push(coords[1] - 1);
-  }
-
-  const rows: number[] = [];
-
-  if (piece.kinged) {
-    if (coords[0] + 1 <= 7) {
-      rows.push(coords[0] + 1);
-    }
-    if (coords[0] - 1 >= 0) {
-      rows.push(coords[0] - 1);
-    }
-  } else {
-    const x = coords[0] + directionAllowed;
-    if (x >= 0 && x <= 7) {
-      rows.push(x);
-    }
-  }
-
-  rows.forEach((x) => {
-    columns.forEach((y) => {
+  regRows.forEach((x) => {
+    regColumns.forEach((y) => {
       if (!board[x][y] || board[x][y].piece) return;
 
       allMoves.push({ moveType: 'noJump', move: [x, y] });
@@ -222,6 +164,32 @@ function getValidMoves(coords: [number, number]): MoveInfo[] {
   return allMoves;
 }
 
+// returns the numbers for the rows that are the distance away from the piece that are still on the board that the piece is allowed to move to based on whether it's kinged or it's color
+function getRows(coords: [number, number], distance: number): number[] {
+  const piece = board[coords[0]][coords[1]].piece;
+  if (!piece) return [];
+
+  const rows: number[] = [];
+  const directionAllowed = piece.color === 'red' ? 1 : -1;
+
+  if (piece.kinged) {
+    if (coords[0] + distance <= 7) {
+      rows.push(coords[0] + distance);
+    }
+    if (coords[0] - distance >= 0) {
+      rows.push(coords[0] - distance);
+    }
+  } else {
+    const x = coords[0] + directionAllowed * distance;
+    if (x >= 0 && x <= 7) {
+      rows.push(x);
+    }
+  }
+
+  return rows;
+}
+
+// returns the numbers for the columns that are the distance away from the piece that are still on the board
 function getColumns(coords: [number, number], distance: number): number[] {
   const columns = [];
   if (coords[1] + distance <= 7) {
@@ -231,19 +199,6 @@ function getColumns(coords: [number, number], distance: number): number[] {
     columns.push(coords[1] - distance);
   }
   return columns;
-}
-
-function getEmptySquares(
-  rows: number[],
-  columns: number[]
-): [number, number][] {
-  const emptySquares: [number, number][] = [];
-  rows.forEach((x) => {
-    columns.forEach((y) => {
-      if (!board[x][y].piece) emptySquares.push([x, y]);
-    });
-  });
-  return emptySquares;
 }
 
 // takes coords of two squares that are diagonal to each other with one square in between
@@ -480,20 +435,6 @@ function playJump(
     deselect();
   }
 }
-
-// // useless
-// function handleMouseover(event: Event): void {
-//   const $eventTarget = event.target as HTMLElement;
-
-//   if ($eventTarget.className.includes(`piece ${gameState.turn}`)) {
-//     console.log('is piece of turn color');
-
-//     // const $square = $eventTarget.parentElement as HTMLDivElement;
-//     // const pieceCoords = getCoords($square);
-//     // const validMoves = getValidMoves(pieceCoords);
-//     // console.log('validMoves', validMoves);
-//   }
-// }
 
 // retrieves the coords from a square element
 function getCoords($square: HTMLDivElement): [number, number] {
