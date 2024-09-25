@@ -336,6 +336,7 @@ function renderBoard(): void {
 function handleClick(event: Event): void {
   const $eventTarget = event.target as HTMLDivElement;
   const className = $eventTarget.className;
+  const { turn } = gameState;
 
   if (className.includes('square')) {
     squareClicked($eventTarget);
@@ -343,21 +344,22 @@ function handleClick(event: Event): void {
   }
 
   let $piece;
-  if (className.includes(gameState.turn) && className.includes('piece')) {
+  if (className.includes(turn) && className.includes('piece')) {
     $piece = $eventTarget;
   } else if ($eventTarget.tagName === 'I') {
     $piece = $eventTarget.parentElement as HTMLDivElement;
-    if (!$piece.className.includes(gameState.turn)) {
+    if (!$piece.className.includes(turn)) {
       $piece = null;
     }
   }
 
   if ($piece) {
-    pieceClicked($piece);
+    selectPiece($piece);
   }
 }
 
-function pieceClicked($piece: HTMLDivElement): void {
+// Deselects previous piece and sets selectedPiece and movesForSelectedPiece in gameState and activates visual selected effect
+function selectPiece($piece: HTMLDivElement): void {
   const $square = $piece.parentElement as HTMLDivElement;
   const pieceCoords = getCoords($square);
   const movementInfo = getValidMoves(pieceCoords);
@@ -373,6 +375,7 @@ function pieceClicked($piece: HTMLDivElement): void {
   }
 }
 
+// sets selectPiece and MovesForSelectedPiece to null and removes selected visual effect
 function deselect(): void {
   const $selectedPiece = document.querySelector('.selected');
   if ($selectedPiece) {
@@ -384,21 +387,22 @@ function deselect(): void {
   gameState.doubleJump = null;
 }
 
-function squareClicked($eventTarget: HTMLDivElement): void {
+// If moving the select piece to the clicked square is a valid move it will call the function to make that move
+function squareClicked($square: HTMLDivElement): void {
   const { movesForSelectedPiece: possibleMoves, pieceSelected } = gameState;
 
   if (!possibleMoves || !pieceSelected) return;
 
-  const squareCoords = getCoords($eventTarget);
+  const squareCoords = getCoords($square);
   const stringifiedCoords = JSON.stringify(squareCoords);
 
   let squareIsValidMove = false;
   let moveInfo: MoveInfo | undefined;
 
-  possibleMoves.forEach((move) => {
-    if (JSON.stringify(move.move) === stringifiedCoords) {
+  possibleMoves.forEach((movement) => {
+    if (JSON.stringify(movement.move) === stringifiedCoords) {
       squareIsValidMove = true;
-      moveInfo = move;
+      moveInfo = movement;
     }
   });
 
@@ -413,6 +417,7 @@ function squareClicked($eventTarget: HTMLDivElement): void {
   }
 }
 
+// moves the piece, checks if it should be kinged, toggles the turn, and deselects the piece
 function playNoJump(
   startCoords: [number, number],
   endCoords: [number, number]
@@ -423,6 +428,7 @@ function playNoJump(
   deselect();
 }
 
+// moves the piece, checks if that piece should be kinged, checks if that piece can jump and allows for a double jump if so and if not it deselects the piece
 function playJump(
   startCoords: [number, number],
   endCoords: [number, number],
