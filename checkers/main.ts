@@ -48,7 +48,7 @@ renderBoard();
 $board.addEventListener('click', handleClick);
 $playAgain.addEventListener('click', reset);
 
-$board.addEventListener('mouseover', handleMouseover);
+// $board.addEventListener('mouseover', handleMouseover);
 
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
 // only checks for existence of piece to be moved doesn't care about rules
@@ -333,6 +333,7 @@ function renderBoard(): void {
   });
 }
 
+// determines whether a square or piece was clicked and calls according functions
 function handleClick(event: Event): void {
   const $eventTarget = event.target as HTMLDivElement;
   const className = $eventTarget.className;
@@ -458,19 +459,21 @@ function playJump(
   }
 }
 
-function handleMouseover(event: Event): void {
-  const $eventTarget = event.target as HTMLElement;
+// // useless
+// function handleMouseover(event: Event): void {
+//   const $eventTarget = event.target as HTMLElement;
 
-  if ($eventTarget.className.includes(`piece ${gameState.turn}`)) {
-    console.log('is piece of turn color');
+//   if ($eventTarget.className.includes(`piece ${gameState.turn}`)) {
+//     console.log('is piece of turn color');
 
-    // const $square = $eventTarget.parentElement as HTMLDivElement;
-    // const pieceCoords = getCoords($square);
-    // const validMoves = getValidMoves(pieceCoords);
-    // console.log('validMoves', validMoves);
-  }
-}
+//     // const $square = $eventTarget.parentElement as HTMLDivElement;
+//     // const pieceCoords = getCoords($square);
+//     // const validMoves = getValidMoves(pieceCoords);
+//     // console.log('validMoves', validMoves);
+//   }
+// }
 
+// retrieves the coords from a square element
 function getCoords($square: HTMLDivElement): [number, number] {
   const stringCoords = $square?.id;
 
@@ -478,6 +481,7 @@ function getCoords($square: HTMLDivElement): [number, number] {
   return coords.map((x) => +x) as [number, number];
 }
 
+// toggles the turn in gameState and updates the turn display
 function toggleTurn(dblJump?: 'red' | 'black'): void {
   if (!$turnDisplay) throw new Error('$turnDisplay non-existent');
 
@@ -495,6 +499,7 @@ function toggleTurn(dblJump?: 'red' | 'black'): void {
   }
 }
 
+// return the color opposite the color provided
 function otherColor(color: 'red' | 'black'): 'red' | 'black' {
   if (color === 'red') return 'black';
   if (color === 'black') return 'red';
@@ -540,6 +545,7 @@ function checkForWin(): void {
   }
 }
 
+// the game over modal is shown and the message on it is set to display the winner
 function win(color: 'red' | 'black'): void {
   if (!$gameOver) throw new Error('$gameOver does not exist');
   if (!$victoryMessage) throw new Error('$victoryMessage does not exist');
@@ -549,6 +555,7 @@ function win(color: 'red' | 'black'): void {
   $gameOver.showModal();
 }
 
+// retrieves all pieces that are currently on the board or that match the provided color
 function getPieces(pieceType: 'red' | 'black' | 'all'): [number, number][] {
   const allCoords: [number, number][] = [];
   board.forEach((row, x) => {
@@ -564,6 +571,7 @@ function getPieces(pieceType: 'red' | 'black' | 'all'): [number, number][] {
   return allCoords;
 }
 
+// checks if a piece qualifies to be kinged and kings it if so
 function checkToKing(coords: [number, number]): void {
   const piece = board[coords[0]][coords[1]].piece;
   if (!piece || piece.kinged) return;
@@ -575,13 +583,7 @@ function checkToKing(coords: [number, number]): void {
   }
 }
 
-// function forceGameOver(loser: 'black' | 'red'): void {
-//   const pieces = getPieces(loser);
-//   pieces.forEach((piece) => {
-//     takePiece(piece);
-//   });
-// }
-
+// resets the board and gamestate and rerenders the board in the dom
 function reset(): void {
   setUpBoard();
   gameState.turn = 'black';
