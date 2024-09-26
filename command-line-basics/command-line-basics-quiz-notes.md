@@ -17,20 +17,22 @@ Answer the following questions in the provided markdown file before turning in t
   - `ls`
     when you want to see what files and directories there are
   - `pwd`
-
+    when you want to know which directory you're working in
   - `echo`
-
+    when you want to print something
   - `touch`
-
+    when you want to make a file
   - `mkdir`
-
+    when you want to make a directory
   - `mv`
-
+    when you want to rename a file
   - `rm`
-
+    when you want to remove a file
   - `cp`
+    when you want to copy a file
 
 - What are the three virtues of a great programmer?
+  laziness, impatience, hubris
 
 ## Notes
 
