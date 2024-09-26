@@ -23,40 +23,40 @@ $playAgain.addEventListener('click', reset);
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
 // only checks for existence of piece to be moved doesn't care about rules
 function movePiece(startLocation, endLocation) {
-  const piece = board[startLocation[0]][startLocation[1]].piece;
+  const [startX, startY] = startLocation;
+  const [endX, endY] = endLocation;
+  const piece = board[startX][startY].piece;
   if (!piece) return;
-  const $startSquare = document.getElementById(
-    `${startLocation[0]},${startLocation[1]}`
-  );
-  const $endSquare = document.getElementById(
-    `${endLocation[0]},${endLocation[1]}`
-  );
+  const $startSquare = document.getElementById(`${startX},${startY}`);
+  const $endSquare = document.getElementById(`${endX},${endY}`);
   if (!$startSquare) throw new Error('$startSquare query failed');
   if (!$endSquare) throw new Error('$endSquare query failed');
   const $piece = $startSquare.children[0];
   if (!$piece) throw new Error('$piece query failed');
-  board[endLocation[0]][endLocation[1]].piece = piece;
+  board[endX][endY].piece = piece;
   $endSquare.appendChild($piece);
-  delete board[startLocation[0]][startLocation[1]].piece;
+  delete board[startX][startY].piece;
   checkForWin();
 }
 // deletes piece at given location and removes the matching coords from the array for the color of the piece in gameState
 function takePiece(location) {
-  const piece = board[location[0]][location[1]].piece;
+  const [x, y] = location;
+  const piece = board[x][y].piece;
   if (!piece) return;
-  const $takenSquare = document.getElementById(`${location[0]},${location[1]}`);
+  const $takenSquare = document.getElementById(`${x},${y}`);
   if (!$takenSquare) throw new Error('$takenSquare query failed');
   const $takenPiece = $takenSquare.children[0];
-  delete board[location[0]][location[1]].piece;
+  delete board[x][y].piece;
   $takenPiece.remove();
 }
 // sets piece at given location to kinged
 function kingPiece(location) {
-  const piece = board[location[0]][location[1]].piece;
+  const [x, y] = location;
+  const piece = board[x][y].piece;
   if (piece) {
     piece.kinged = true;
   }
-  const $piece = document.getElementById(`${location[0]},${location[1]}`);
+  const $piece = document.getElementById(`${x},${y}`);
   if (!$piece) throw new Error('$piece query failed');
   const $crown = document.createElement('i');
   $crown.className = 'fa-solid fa-crown';
@@ -64,12 +64,13 @@ function kingPiece(location) {
 }
 // returns an array with all valid moves for a piece at provided coords
 function getValidMoves(coords) {
-  if (coords[0] > 7 || coords[1] > 7 || coords[0] < 0 || coords[1] < 0) {
+  const [pieceX, pieceY] = coords;
+  if (pieceX > 7 || pieceY > 7 || pieceX < 0 || pieceY < 0) {
     throw new Error(
       `Cannot get moves for ${coords} because square does not exist`
     );
   }
-  const square = board[coords[0]][coords[1]];
+  const square = board[pieceX][pieceY];
   const piece = square.piece;
   if (!square.playable) throw new Error(`Square at ${coords} is not playable`);
   if (!piece) return [];
@@ -108,33 +109,35 @@ function getValidMoves(coords) {
 }
 // returns the numbers for the rows that are the distance away from the piece that are still on the board that the piece is allowed to move to based on whether it's kinged or it's color
 function getRows(coords, distance) {
-  const piece = board[coords[0]][coords[1]].piece;
+  const [x, y] = coords;
+  const piece = board[x][y].piece;
   if (!piece) return [];
   const rows = [];
   const directionAllowed = piece.color === 'red' ? 1 : -1;
   if (piece.kinged) {
-    if (coords[0] + distance <= 7) {
-      rows.push(coords[0] + distance);
+    if (x + distance <= 7) {
+      rows.push(x + distance);
     }
-    if (coords[0] - distance >= 0) {
-      rows.push(coords[0] - distance);
+    if (x - distance >= 0) {
+      rows.push(x - distance);
     }
   } else {
-    const x = coords[0] + directionAllowed * distance;
-    if (x >= 0 && x <= 7) {
-      rows.push(x);
+    const row = x + directionAllowed * distance;
+    if (row >= 0 && row <= 7) {
+      rows.push(row);
     }
   }
   return rows;
 }
 // returns the numbers for the columns that are the distance away from the piece that are still on the board
 function getColumns(coords, distance) {
+  const [, y] = coords;
   const columns = [];
-  if (coords[1] + distance <= 7) {
-    columns.push(coords[1] + distance);
+  if (y + distance <= 7) {
+    columns.push(y + distance);
   }
-  if (coords[1] - distance >= 0) {
-    columns.push(coords[1] - distance);
+  if (y - distance >= 0) {
+    columns.push(y - distance);
   }
   return columns;
 }
@@ -142,15 +145,11 @@ function getColumns(coords, distance) {
 // returns the coords of the square in between
 // has a chance of returning a non existent square if passed squares that aren't two over in either direction
 function findMiddleSquare(startLocation, endLocation) {
-  const distanceGoing = [
-    startLocation[0] - endLocation[0],
-    startLocation[1] - endLocation[1],
-  ];
+  const [startX, startY] = startLocation;
+  const [endX, endY] = endLocation;
+  const distanceGoing = [startX - endX, startY - endY];
   const directionGoing = distanceGoing.map((x) => x / 2);
-  const middleSquare = [
-    startLocation[0] - directionGoing[0],
-    startLocation[1] - directionGoing[1],
-  ];
+  const middleSquare = [startX - directionGoing[0], startY - directionGoing[1]];
   return middleSquare;
 }
 // sets board with pieces to start the game and populates color arrays in gameState
