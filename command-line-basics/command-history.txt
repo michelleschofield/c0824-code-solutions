@@ -1,0 +1,500 @@
+  124  git add ts/
+  125  git status
+  126  git commit -m 'Listen for input in url field and set photo url to that'
+  127  npx tsc --watch
+  128  git status
+  129  git add index.html 
+  130  git add js/
+  131  git add ts/
+  132  git status
+  133  git commit -m 'Listen for submit and store values in object'
+  134  npx tsc --watch
+  135  git status
+  136  git add
+  137  git add ts/
+  138  git status
+  139  git add js/
+  140  git status
+  141  git commit -m 'Assign entryId and add object to data.entries'
+  142  npx tsc --watch
+  143  git status
+  144  git add js
+  145  git status
+  146  git add ts/
+  147  git status
+  148  git commit -m 'Photo url and form are reset #1'
+  149  npx tsc --watch
+  150  git statu
+  151  git status
+  152  git add ts/
+  153  git add js/
+  154  git status
+  155  git commit -m 'Data is stored in local storage and read from local storage #1'
+  156  npx tsc --watch
+  157  git status
+  158  git add ts
+  159  git add js/
+  160  git status
+  161  git commit -m 'If image didn't load url is reset to placeholder image #1'
+  162  git commit -m "If image didn't load the src is set to the placeholder image #1'
+  163  "
+  164  git commit --ammend -m "If image didn't load the src is set to the placeholder image #1"
+  165  git status
+  166  git add css
+  167  git status
+  168  git commit -m 'Removed all useless css rulesets'
+  169  git commit --amend -m 'Removed all useless css rulesets #1'
+  170  git status
+  171  git add index.html 
+  172  git status
+  173  git commit -m "Altered html to fix an alignment issue #1"
+  174  git push origin issue-1-create-an-entry 
+  175  npx tsc --watch
+  176  git status
+  177  git add index.html 
+  178  git add js/
+  179  git add ts
+  180  git status
+  181  git commit -m 'Function added to detect valid url and other polishing'
+  182  git commit --amend -m 'Detect if url is valid before setting it as the image src, as well as other polishing #1'
+  183  git push origin issue-1-create-an-entry 
+  184  git push origin issue-1-create-an-entry 
+  185  git push origin issue-1-create-an-entry 
+  186  git switch checkers
+  187  git switch main
+  188  git pull origin main
+  189  git pull origin main
+  190  cd ..
+  191  cd code-journal
+  192  git branch issue-2-view-entries
+  193  git switch issue-2-view-entries 
+  194  git status
+  195  git add index.html 
+  196  git add css/
+  197  git status
+  198  git commit -m 'html and css layout set up #2'
+  199  npx tsc --watch
+  200  git status
+  201  git add js/
+  202  git add ts/
+  203  git status
+  204  git commit -m 'Working on function to render and entry, need to pause for now #2'
+  205  git commit -m 'Working on function to render and entry, need to pause for now #2' --no-verify
+  206  git push origin issue-2-view-entries 
+  207  git pull
+  208  git pull
+  209  npx tsc --watch
+  210  git status
+  211  git issue-2-view-entries
+  212  git branch issue-2-view-entries
+  213  git switch issue-2-view-entries 
+  214  git status
+  215  git add ts/
+  216  git add js/
+  217  git status
+  218  git commit -m 'User can switch between views #2'
+  219  git push origin issue-2-view-entries 
+  220  npx tsc --watch
+  221  git status
+  222  git add ts/
+  223  git add js/
+  224  git add css/
+  225  git add index.html 
+  226  git status
+  227  git commit -m 'There is text that is shown or hidden based on whether or not there are any existing entries #2'
+  228  git status
+  229  git push origin issue-2-view-entries 
+  230  git switch main
+  231  git pull origin main
+  232  git branch issue-3-edit-entries
+  233  git switch issue-3-edit-entries 
+  234  git switch main
+  235  git pull origin main
+  236  cd ..
+  237  git clone git@github.com:michelleschofield/code-journal.git
+  238  cd code-journal
+  239  npx tsc --watch
+  240  npx tsc --watch
+  241  git status
+  242  git add css/
+  243  git add index.html 
+  244  git add js/
+  245  git add ts/
+  246  git status
+  247  git commit -m 'Altered renderEntry function to show an edit button, styling needs work #2'
+  248  git push origin issue-3-edit-entries 
+  249  npx tsc --watch
+  250  git status
+  251  git add css/
+  252  git add index.html 
+  253  git add js/
+  254  git add ts/
+  255  git status
+  256  git commit -m 'Entry form is prepopulated with data from the entry that is being edited #2'
+  257  npx tsc --watch
+  258  git status
+  259  git add js/
+  260  git add ts/
+  261  git status
+  262  git commit -m 'Previous li is replaced with updated li, and previous entry in the data is replaced as well #2'
+  263  git push origin issue-3-edit-entries 
+  264  git push origin issue-3-edit-entries 
+  265  npx tsc --watch
+  266  'New button clears form, all console.logs removed, superfluous css removed #2'
+  267  git status
+  268  git add js/
+  269  git add ts
+  270  git status
+  271  git commit -m 'New button clears form, all console.logs removed, css confirmed to all be doing something #2'
+  272  git push origin issue-3-edit-entries 
+  273  git switch main
+  274  git pull origin main
+  275  git branch issue-4-delete-entries
+  276  git switch issue-4-delete-entries 
+  277  npx tsc --watch
+  278  git status
+  279  git add css/
+  280  git add index.html 
+  281  git add js/
+  282  git add ts/
+  283  git status
+  284  git commit -m 'There is a delete button that only shows when editing and entry #4'
+  285  npx tsc --watch
+  286  git status
+  287  git add css/
+  288  git add index.html 
+  289  git add js/
+  290  git add ts/
+  291  git status
+  292  git commit -m 'A confirmation modal is shown when the user clicks delete #4'
+  293  npx tsc --watch
+  294  git status
+  295  git add ts/
+  296  git add js/
+  297  git status
+  298  git commmit -m 'The confirmation dialog closes when the user clicks cancel #4'
+  299  git commit -m 'The confirmation dialog closes when the user clicks cancel #4'
+  300  npx tsc --watch
+  301  git status
+  302  git add ts/
+  303  git add js/
+  304  git status
+  305  git commit -m 'Confirming deletion deletes entry from data model as well as dom #4'
+  306  git push origin issue-4-delete-entries 
+  307  git status
+  308  git add css/
+  309  git add index.html 
+  310  git status
+  311  git commit -m 'Final css adjustments #4'
+  312  npx tsc --watch
+  313  git status
+  314  git add css
+  315  git add index.html 
+  316  git add js/
+  317  git add ts/
+  318  git status
+  319  git commit -m 'Final polishing #4'
+  320  git push origin issue-4-delete-entries 
+  321  git switch main
+  322  git switch issue-4-delete-entries 
+  323  npx tsc --watch
+  324  git status
+  325  git add js/
+  326  git add ts/
+  327  git status
+  328  git commit -m 'Deleted a single line of redundant code #4'
+  329  git push origin issue-4-delete-entries 
+  330  git push origin issue-4-delete-entries 
+  331  git switch main
+  332  git pull origin main
+  333  git switch checkers
+  334  cd checkers
+  335  npx tsc --watch
+  336  git status
+  337  cd ..
+  338  git status
+  339  git add checkers
+  340  git commit -m 'Added function to detect all valid moves for a piece at given coordinates'
+  341  cd checkers
+  342  npx tsc --watch
+  343  cd ..
+  344  git status
+  345  git add checkers
+  346  git commit -m 'Began debugging new function for getting valid moves'
+  347  git push origin checkers
+  348  cd checkers 
+  349  npx tsc --watch
+  350  git status
+  351  npx tsc --watch
+  352  cd ..
+  353  git status
+  354  git add checkers
+  355  git status
+  356  git commit -m 'getValidMoves is functioning correctly'
+  357  cd checkers
+  358  npx tsc --watch
+  359  cd ..
+  360  git status
+  361  git add checkers
+  362  git status
+  363  git commit -m 'event handler that logs the valid moves of the piece being hovered is in place'
+  364  cd checkers
+  365  npx tsc --watch
+  366  cd ..
+  367  git status
+  368  git add checkers
+  369  git status 
+  370  git commit -m 'handleClick callback function adjusted to use new getValidMoves function'
+  371  cd checkers
+  372  npx tsc --watch
+  373  git status
+  374  cd ..
+  375  git add checkers
+  376  git status
+  377  git commit -m 'handleClick callback function change to use new getValidMoves function'
+  378  cd checkers
+  379  npx tsc --watch
+  380  cd ..
+  381  git status
+  382  git add checkers
+  383  git status
+  384  git commit -m 'old functions for detecting moves have been deleted, typing of all functions has been brought up to higher standards'
+  385  git push origin checkers
+  386  cd checkers
+  387  npx tsc --watch
+  388  git status
+  389  cd checkers
+  390  cd ..
+  391  git add checkers
+  392  git status
+  393  git commit -m 'began work on making double jumping a thing and now I need a break'
+  394  git push origin checkers
+  395  npx tsc --watch
+  396  cd checkers 
+  397  npx tsc --watch
+  398  cd ..
+  399  git add checkers
+  400  git status
+  401  git commit -m 'Function added to loop through pieces for one of the colors and return legal moves, it does not work'
+  402  git push origin checkers
+  403  cd checkers
+  404  npx tsc --watch
+  405  cd ..
+  406  git status
+  407  git add checkers
+  408  git status
+  409  git commit -m 'started work on updating movePiece'
+  410  git push origin checkers
+  411  cd checkers
+  412  npx tsc --watch
+  413  cd ..
+  414  git status
+  415  git add checkers
+  416  git status
+  417  git commit -m 'imformation handling and storage has been significantly simplified'
+  418  cd checkers
+  419  npx tsc --watch
+  420  git status
+  421  cd ..
+  422  git status
+  423  git add checkers
+  424  cd checkers
+  425  npx tsc --watch
+  426  cd ..
+  427  git status
+  428  git add checkers
+  429  git status
+  430  git commit -m 'display for turn added'
+  431  cd checkers
+  432  npx tsc --watch
+  433  cd ..
+  434  git status
+  435  git add checkers
+  436  git status
+  437  git commit -m 'the game itself seems to be fully functional'
+  438  git push origin checkers
+  439  cd checkers
+  440  npx tsc --watch
+  441  cd ..
+  442  git status
+  443  git add checkers
+  444  git status
+  445  git commit -m 'kinging a piece gives it a crown, additional styling for pieces'
+  446  cd checkers
+  447  npx tsc --watch
+  448  cd ..
+  449  git statu
+  450  git status
+  451  git add checkers
+  452  git status
+  453  git commit -m 'a selected piece will glow until no longer selected'
+  454  cd checkers
+  455  npx tsc --watch
+  456  cd ..
+  457  git add checkers
+  458  git commit -m 'turn display is compatible with double jumps'
+  459  cd checkers
+  460  npx tsc --watch
+  461  cd ..
+  462  git push origin checkers
+  463  cd checkers
+  464  npx tsc --watch
+  465  git status
+  466  cd ..
+  467  git add checkers
+  468  git commit -m 'hover'
+  469  git push origin checkers
+  470  git switch main
+  471  git branch --list
+  472  git switch css-tailwind-responsive-layout 
+  473  git status
+  474  git add css-tailwind-responsive-layout/
+  475  git commit -m 'html converted but not working'
+  476  git push origin css-tailwind-responsive-layout 
+  477  git switch main
+  478  cd ..
+  479  git clone git@github.com:michelleschofield/week-planner.git
+  480  cd week-planner
+  481  npm install
+  482  git pull origin main
+  483  git pull origin main
+  484  git pull origin mainn
+  485  git pull origin main
+  486  git pull origin main
+  487  npx tsc --watch
+  488  git add .
+  489  git commit -m 'Dialog and stuff' --no-verify
+  490  git push origin main
+  491  git pull origin main
+  492  npx tsc --watch
+  493  git add .
+  494  git commit -m 'form stuff' --no-verify
+  495  git push origin main
+  496  git pull origin main
+  497  npx tsc --watch
+  498  git add .
+  499  git commit -m 'edit button almost kinda does stuff' --no-verify
+  500  git push origin main
+  501  git switch checkers
+  502  cd checkers 
+  503  npx tsc --watch
+  504  cd ..
+  505  git add checkers
+  506  git commit -m 'adding comments'
+  507  git push origin checkers
+  508  git switch main
+  509  git pull origin main
+  510  git branch --list
+  511  git branch array-methods
+  512  git switch array-methods 
+  513  cd array-methods/
+  514  npx tsc --watch
+  515  cd ..
+  516  git add array-methods/
+  517  git commit -m 'Completed array-methods exercise'
+  518  git push origin array-methods
+  519  git switch main
+  520  git switch checkers
+  521  cd checkers
+  522  npx tsc --watch
+  523  cd ..
+  524  git add checkers
+  525  git commit -m 'all functions have comments'
+  526  cd checkers
+  527  npx tsc --watch
+  528  cd ..
+  529  git add checkers
+  530  git commit -m 'taking a break for now' --no-verify
+  531  git push origin checkers
+  532  cd checkers
+  533  npx tsc --watch
+  534  cd ..
+  535  git add checkers
+  536  git commit -m 'getValidMoves now implements getColumns and getRows functions'
+  537  git push origin checkers
+  538  git switch main
+  539  git switch checkers
+  540  cd checkers 
+  541  npx tsc --watch
+  542  cd ..
+  543  git add checkers
+  544  git status
+  545  git commit -m 'destructuring'
+  546  git push origin checkers
+  547  git switch main
+  548  git pull origin main
+  549  git branch -D array-methods 
+  550  git branch --list
+  551  git branch command-line-basics
+  552  git switch command-line-basics 
+  553  cd command-line-basics/
+  554  man man
+  555  man cat
+  556  man cat
+  557  cat laziness.txt
+  558  cat laziness.txt - impatience.txt
+  559  man cat
+  560  cat laziness.txt imaptience.txt
+  561  cat laziness.txt impatience.txt
+  562  cat laziness.txt impatience.txt hubris.txt
+  563  man cat
+  564  man cat
+  565  cat laziness.txt impatience.txt hubris.txt > three-virtues.txt
+  566  cat three-virtues
+  567  cat three-virtues.txt
+  568  man ls
+  569  mas ls
+  570  man ls
+  571  ls
+  572  ls -a
+  573  ls -F
+  574  man ls
+  575  ls lfz-staff/
+  576  ls lfz-staff -a
+  577  ls lfx-staff -F
+  578  ls lfz-staff -F
+  579  ls lfz-staff/ > lfz-staff/contents.txt
+  580  ls lfz-staff
+  581  cat contents.txt
+  582  cat lfz-staff/contents.txt
+  583  man pwd
+  584  pwd
+  585  pwd > i-was-here.txt
+  586  ls
+  587  cat i-was-here.txt
+  588  man echo
+  589  echo 'Hello, World!'
+  590  echo 'Hello, World!' > hello.txt
+  591  cat hello.txt
+  592  ls
+  593  man touch
+  594  touch tag-youre-it.txt
+  595  ls
+  596  touch snoot/boop.txt
+  597  ls snoot
+  598  man mkdir
+  599  mkdir parent
+  600  ls
+  601  man mkdir
+  602  mkdir -p parent/child/grandchild
+  603  ls parent
+  604  ls parent/child
+  605  touch parent/child/grandchild/.gitkeep
+  606  ls parent/child/grandchild
+  607  ls -a parent/child/grandchild
+  608  man mv
+  609  man mv
+  610  mv pokiemans pokemon
+  611  man rm
+  612  man rm
+  613  rm lol.txt
+  614  ls 
+  615  rm -r kill-me/
+  616  ls
+  617  man cp
+  618  cp and-then.txt no-and-then.txt
+  619  ls
+  620  cat and-then.txt no-and-then.txt
+  621  man history
+  622  history
+  623  history > command-history.txt
