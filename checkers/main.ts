@@ -48,6 +48,103 @@ renderBoard();
 $board.addEventListener('click', handleClick);
 $playAgain.addEventListener('click', reset);
 
+// determines whether a square or piece was clicked and calls according functions
+function handleClick(event: Event): void {
+  const $eventTarget = event.target as HTMLDivElement;
+  const className = $eventTarget.className;
+  const { turn } = gameState;
+
+  if (className.includes('square')) {
+    squareClicked($eventTarget);
+    return;
+  }
+
+  let $piece;
+  if (className.includes(turn) && className.includes('piece')) {
+    $piece = $eventTarget;
+  } else if ($eventTarget.tagName === 'I') {
+    $piece = $eventTarget.parentElement as HTMLDivElement;
+    if (!$piece.className.includes(turn)) {
+      $piece = null;
+    }
+  }
+
+  if ($piece) {
+    selectPiece($piece);
+  }
+}
+
+// If moving the select piece to the clicked square is a valid move it will call the function to make that move
+function squareClicked($square: HTMLDivElement): void {
+  const { movesForSelectedPiece: possibleMoves, pieceSelected } = gameState;
+
+  if (!possibleMoves || !pieceSelected) return;
+
+  const squareCoords = getCoords($square);
+  const stringifiedCoords = JSON.stringify(squareCoords);
+
+  let squareIsValidMove = false;
+  let moveInfo: MoveInfo | undefined;
+
+  possibleMoves.forEach((movement) => {
+    if (JSON.stringify(movement.move) === stringifiedCoords) {
+      squareIsValidMove = true;
+      moveInfo = movement;
+    }
+  });
+
+  if (squareIsValidMove && moveInfo) {
+    if (moveInfo.moveType === 'noJump') {
+      playNoJump(pieceSelected, squareCoords);
+    } else if (moveInfo.moveType === 'jump') {
+      if (!moveInfo.jumpedSquare)
+        throw new Error(`${pieceSelected} cannot jump without a jumped square`);
+      playJump(pieceSelected, squareCoords, moveInfo.jumpedSquare);
+    }
+  }
+}
+
+// moves the piece, checks if it should be kinged, toggles the turn, and deselects the piece
+function playNoJump(
+  startCoords: [number, number],
+  endCoords: [number, number]
+): void {
+  movePiece(startCoords, endCoords);
+  checkToKing(endCoords);
+  toggleTurn();
+  deselect();
+}
+
+// moves the piece, checks if that piece should be kinged, checks if that piece can jump and allows for a double jump if so and if not it deselects the piece
+function playJump(
+  startCoords: [number, number],
+  endCoords: [number, number],
+  jumpedCoords: [number, number]
+): void {
+  takePiece(jumpedCoords);
+
+  movePiece(startCoords, endCoords);
+  checkToKing(endCoords);
+
+  const pieceColor = board[endCoords[0]][endCoords[1]].piece?.color;
+  if (!pieceColor)
+    throw new Error(`piece at ${endCoords} doesn't have a color`);
+
+  const allMoves = getValidMoves(endCoords);
+  const jumpMoves = allMoves.filter((moveInfo) => moveInfo.moveType === 'jump');
+
+  if (jumpMoves.length) {
+    gameState.movesForSelectedPiece = jumpMoves;
+    gameState.pieceSelected = endCoords;
+    gameState.doubleJump = `${pieceColor}`;
+
+    toggleTurn(pieceColor);
+  } else {
+    toggleTurn();
+    deselect();
+  }
+}
+
 // sets piece at endLocation to piece at startLocation, and deletes piece at startLocation
 // only checks for existence of piece to be moved doesn't care about rules
 function movePiece(
@@ -321,32 +418,6 @@ function renderBoard(): void {
   });
 }
 
-// determines whether a square or piece was clicked and calls according functions
-function handleClick(event: Event): void {
-  const $eventTarget = event.target as HTMLDivElement;
-  const className = $eventTarget.className;
-  const { turn } = gameState;
-
-  if (className.includes('square')) {
-    squareClicked($eventTarget);
-    return;
-  }
-
-  let $piece;
-  if (className.includes(turn) && className.includes('piece')) {
-    $piece = $eventTarget;
-  } else if ($eventTarget.tagName === 'I') {
-    $piece = $eventTarget.parentElement as HTMLDivElement;
-    if (!$piece.className.includes(turn)) {
-      $piece = null;
-    }
-  }
-
-  if ($piece) {
-    selectPiece($piece);
-  }
-}
-
 // Deselects previous piece and sets selectedPiece and movesForSelectedPiece in gameState and activates visual selected effect
 function selectPiece($piece: HTMLDivElement): void {
   const $square = $piece.parentElement as HTMLDivElement;
@@ -374,77 +445,6 @@ function deselect(): void {
   gameState.pieceSelected = null;
   gameState.movesForSelectedPiece = null;
   gameState.doubleJump = null;
-}
-
-// If moving the select piece to the clicked square is a valid move it will call the function to make that move
-function squareClicked($square: HTMLDivElement): void {
-  const { movesForSelectedPiece: possibleMoves, pieceSelected } = gameState;
-
-  if (!possibleMoves || !pieceSelected) return;
-
-  const squareCoords = getCoords($square);
-  const stringifiedCoords = JSON.stringify(squareCoords);
-
-  let squareIsValidMove = false;
-  let moveInfo: MoveInfo | undefined;
-
-  possibleMoves.forEach((movement) => {
-    if (JSON.stringify(movement.move) === stringifiedCoords) {
-      squareIsValidMove = true;
-      moveInfo = movement;
-    }
-  });
-
-  if (squareIsValidMove && moveInfo) {
-    if (moveInfo.moveType === 'noJump') {
-      playNoJump(pieceSelected, squareCoords);
-    } else if (moveInfo.moveType === 'jump') {
-      if (!moveInfo.jumpedSquare)
-        throw new Error(`${pieceSelected} cannot jump without a jumped square`);
-      playJump(pieceSelected, squareCoords, moveInfo.jumpedSquare);
-    }
-  }
-}
-
-// moves the piece, checks if it should be kinged, toggles the turn, and deselects the piece
-function playNoJump(
-  startCoords: [number, number],
-  endCoords: [number, number]
-): void {
-  movePiece(startCoords, endCoords);
-  checkToKing(endCoords);
-  toggleTurn();
-  deselect();
-}
-
-// moves the piece, checks if that piece should be kinged, checks if that piece can jump and allows for a double jump if so and if not it deselects the piece
-function playJump(
-  startCoords: [number, number],
-  endCoords: [number, number],
-  jumpedCoords: [number, number]
-): void {
-  takePiece(jumpedCoords);
-
-  movePiece(startCoords, endCoords);
-  checkToKing(endCoords);
-
-  const pieceColor = board[endCoords[0]][endCoords[1]].piece?.color;
-  if (!pieceColor)
-    throw new Error(`piece at ${endCoords} doesn't have a color`);
-
-  const allMoves = getValidMoves(endCoords);
-  const jumpMoves = allMoves.filter((moveInfo) => moveInfo.moveType === 'jump');
-
-  if (jumpMoves.length) {
-    gameState.movesForSelectedPiece = jumpMoves;
-    gameState.pieceSelected = endCoords;
-    gameState.doubleJump = `${pieceColor}`;
-
-    toggleTurn(pieceColor);
-  } else {
-    toggleTurn();
-    deselect();
-  }
 }
 
 // retrieves the coords from a square element
