@@ -1,0 +1,65 @@
+/* pokemon color pallette */
+
+.colors {
+  color: rgb(255, 255, 255);
+  color: rgb(251, 216, 75);
+  color: rgb(255, 42, 40);
+  color: rgb(99, 187, 255);
+  color: rgb(60, 65, 133);
+}
+
+/* fonts! */
+
+.krona-one-regular {
+  font-family: 'Krona One', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.nunito-font {
+  font-family: Nunito, sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* this one is better than nunito */
+.rubik-font {
+  font-family: Rubik, sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* good for general text use */
+.quicksand-font {
+  font-family: Quicksand, sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.kanit-regular {
+  font-family: Kanit, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* I like this one for headers */
+.kanit-bold {
+  font-family: Kanit, sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.kanit-extrabold {
+  font-family: Kanit, sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* end of fonts */
+
+.small-width {
+  width: 12rem;
+}
