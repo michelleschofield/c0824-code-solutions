@@ -31,7 +31,7 @@ const imagesAndInfo = [
 export function App() {
   const [index, setIndex] = useState(0);
 
-  const currentImage = imagesAndInfo[index];
+  const { src, caption, description } = imagesAndInfo[index];
   const length = imagesAndInfo.length;
 
   function nextImage() {
@@ -39,15 +39,15 @@ export function App() {
   }
 
   function previousImage() {
-    setIndex(index - 1 < 0 ? length : index - 1);
+    setIndex(index - 1 < 0 ? length - 1 : index - 1);
   }
 
   return (
     <>
       <Header text={headerText} />
-      <Image src={currentImage.src} />
-      <ImageCaption caption={currentImage.caption} />
-      <ImageDescription desc={currentImage.description} />
+      <Image src={src} />
+      <ImageCaption caption={caption} />
+      <ImageDescription desc={description} />
       <Button handleClick={nextImage} label="Next Image" />
       <Button handleClick={previousImage} label="Previous Image" />
     </>
