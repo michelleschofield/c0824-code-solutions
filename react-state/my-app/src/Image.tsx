@@ -1,10 +1,10 @@
-import './ImageContainer.css';
+import './Image.css';
 
 type Props = {
   src: string;
 };
 
-export function ImageContainer({ src }: Props) {
+export function Image({ src }: Props) {
   return (
     <div className="d-flex justify-content-center">
       <div className="width-50 ">
