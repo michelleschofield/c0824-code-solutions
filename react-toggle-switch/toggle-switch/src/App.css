@@ -1,0 +1,38 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.switch-container {
+  display: flex;
+  align-items: center;
+}
+
+.switch {
+  height: 1rem;
+  width: 2rem;
+  border-radius: 0.75rem;
+  display: flex;
+  border: 2px solid black;
+  align-items: center;
+  margin: 0.2rem;
+}
+
+.switch.on {
+  background-color: rgb(61, 216, 46);
+  justify-content: flex-end;
+}
+
+.switch.off {
+  background-color: lightgray;
+}
+
+.circle {
+  height: 0.9rem;
+  width: 0.9rem;
+  background-color: white;
+  border-radius: 50%;
+  border: 2px solid black;
+}
