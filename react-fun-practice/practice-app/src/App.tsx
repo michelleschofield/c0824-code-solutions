@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import './App.css';
 
 type Product = {
@@ -99,12 +99,14 @@ function SearchBar({
   onInStockOnlyChange,
   onFilterTextChange,
 }: SearchBarProps) {
-  function handleFilterTextChange(event: Event): void {
-    onFilterTextChange(event.target.value);
+  function handleFilterTextChange(event: ChangeEvent): void {
+    const $target = event.target as HTMLInputElement;
+    onFilterTextChange($target.value);
   }
 
-  function handleInStockOnlyChange(event: Event): void {
-    onInStockOnlyChange(event.target.value);
+  function handleInStockOnlyChange(event: ChangeEvent): void {
+    const $target = event.target as HTMLInputElement;
+    onInStockOnlyChange($target.checked);
   }
 
   return (
@@ -120,7 +122,7 @@ function SearchBar({
           onChange={handleInStockOnlyChange}
           type="checkbox"
           checked={inStockOnly}
-        />{' '}
+        />
         Only show products in stock
       </label>
     </form>
