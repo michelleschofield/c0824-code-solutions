@@ -64,10 +64,12 @@ function ProductTable({
     }
 
     if (category !== lastCategory) {
-      rows.push(<ProductCategoryRow category={category} />);
+      rows.push(
+        <ProductCategoryRow key={product.category} category={category} />
+      );
     }
 
-    rows.push(<ProductRow product={product} />);
+    rows.push(<ProductRow key={product.name} product={product} />);
     lastCategory = category;
   });
 
@@ -87,22 +89,22 @@ function ProductTable({
 type SearchBarProps = {
   filterText: string;
   inStockOnly: boolean;
-  setInStockOnly: React.Dispatch<React.SetStateAction<boolean>>;
-  setFilterText: React.Dispatch<React.SetStateAction<string>>;
+  onInStockOnlyChange: (value: boolean) => void;
+  onFilterTextChange: (value: string) => void;
 };
 
 function SearchBar({
   filterText,
   inStockOnly,
-  setInStockOnly,
-  setFilterText,
+  onInStockOnlyChange,
+  onFilterTextChange,
 }: SearchBarProps) {
-  function handleFilterTextChange(event: Event) {
-    setFilterText(event.target.value);
+  function handleFilterTextChange(event: Event): void {
+    onFilterTextChange(event.target.value);
   }
 
-  function handleInStockOnlyChange(event: Event) {
-    setFilterText(event.target.checked);
+  function handleInStockOnlyChange(event: Event): void {
+    onInStockOnlyChange(event.target.value);
   }
 
   return (
@@ -133,11 +135,19 @@ function FilterableProductTable({ products }: FilterableProductTableProps) {
   const [filterText, setFilterText] = useState('apple');
   const [inStockOnly, setInStockOnly] = useState(true);
 
+  function handleInStockOnlyChange(value: boolean): void {
+    setInStockOnly(value);
+  }
+
+  function handleFilterTextChange(value: string): void {
+    setFilterText(value);
+  }
+
   return (
     <div>
       <SearchBar
-        setInStockOnly={setInStockOnly}
-        setFilterText={setFilterText}
+        onInStockOnlyChange={handleInStockOnlyChange}
+        onFilterTextChange={handleFilterTextChange}
         filterText={filterText}
         inStockOnly={inStockOnly}
       />
