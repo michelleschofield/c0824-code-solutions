@@ -1,0 +1,46 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.freezing {
+  background-color: aqua;
+  color: black;
+}
+
+.cold {
+  background-color: rgb(80, 211, 255);
+  color: black;
+}
+
+.cool {
+  background-color: rgb(48, 131, 255);
+  color: white;
+}
+
+.normal {
+  background-color: rgb(127, 48, 255);
+  color: white;
+}
+
+.warm {
+  background-color: rgb(227, 48, 255);
+  color: white;
+}
+
+.hot {
+  background-color: rgb(255, 48, 48);
+  color: white;
+}
+
+.really-hot {
+  background-color: rgb(255, 151, 48);
+  color: black;
+}
+
+.blazing {
+  background-color: rgb(255, 242, 160);
+  color: black;
+}
