@@ -12,7 +12,7 @@ export function ToggleSwitch() {
       <div onClick={handleClick} className={`switch ${active ? 'on' : 'off'}`}>
         <div className="circle"></div>
       </div>
-      <p>On</p>
+      <p>{active ? 'on' : 'off'}</p>
     </div>
   );
 }
