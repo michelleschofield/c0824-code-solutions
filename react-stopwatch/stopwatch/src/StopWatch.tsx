@@ -26,7 +26,9 @@ export function StopWatch() {
 
   return (
     <>
-      <div className="circle" onClick={resetTimer}>
+      <div
+        className={`circle ${intervalId ?? 'clickable'}`}
+        onClick={resetTimer}>
         <h2>{time}</h2>
       </div>
       <button onClick={intervalId ? pauseTimer : startTimer}>
