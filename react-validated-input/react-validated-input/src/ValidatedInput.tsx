@@ -1,66 +1,59 @@
 import { useState } from 'react';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 
 export function ValidatedInput() {
   const [password, setPassword] = useState('');
   const [confirmedPassword, setConfirmedPassword] = useState('');
 
-  const checkMark = <i>&#9989;</i>;
-  const xMark = <i>&#10060;</i>;
-
-  const capitalLetterChecker = /([A-Z])/g;
-  const digitChecker = /\d/g;
-  const specialCharacterChecker = /[\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)]/g;
-
-  let isValid = false;
-  let message = '';
-
-  if (password.length === 0) {
-    message += ' You must enter a password.';
-  } else if (password.length < 8) {
-    message += ' Your password is too short.';
-  } else if (!password.match(capitalLetterChecker)) {
-    message += ' Your password must contain a capital letter.';
-  } else if (!password.match(digitChecker)) {
-    message += ' Your password must contain a numerical digit.';
-  } else if (!password.match(specialCharacterChecker)) {
-    message += ' Your password must conation a special character (!@#$%^&*())';
-  } else if (message.length === 0) {
-    isValid = true;
+  function validatePassword(password: string): string {
+    if (password.length === 0) return 'You must enter a password.';
+    if (password.length < 8) return 'Your password is too short.';
+    if (!password.match(/([A-Z])/g))
+      return 'Your password must contain a capital letter.';
+    if (!password.match(/\d/g))
+      return 'Your password must contain a numerical digit.';
+    if (!password.match(/[\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)]/g))
+      return 'Your password must conation a special character (!@#$%^&*())';
+    return '';
   }
 
-  let isVerified = false;
-  let verificationMessage = '';
-
-  if (!isValid) {
-    verificationMessage = 'Create a valid password first';
-  } else if (confirmedPassword !== password) {
-    isVerified = false;
-    verificationMessage = 'Passwords do not match';
-  } else {
-    isVerified = true;
+  function confirmPassword(password: string, confirmation: string) {
+    return confirmation === password ? '' : 'Passwords do not match';
   }
+
+  const message = validatePassword(password);
+  const isValid = !message;
+
+  const confirmationMessage = isValid
+    ? confirmPassword(password, confirmedPassword)
+    : 'Create a valid password first';
+  const isConfirmed = !confirmationMessage;
 
   return (
     <>
       <div>
-        <label>Password:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {isValid ? checkMark : xMark}
-        {message ? <p>{message}</p> : <></>}
+        <label>
+          Password:
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {isValid ? <FaCheck color="green" /> : <FaTimes color="red" />}
+          {message && <p>{message}</p>}
+        </label>
       </div>
       <div>
-        <label>Verify your password:</label>
-        <input
-          type="password"
-          value={confirmedPassword}
-          onChange={(e) => setConfirmedPassword(e.target.value)}
-        />
-        {isVerified ? checkMark : xMark}
-        {verificationMessage ? <p>{verificationMessage}</p> : <></>}
+        <label>
+          Verify your password:
+          <input
+            type="password"
+            value={confirmedPassword}
+            onChange={(e) => setConfirmedPassword(e.target.value)}
+          />
+          {isConfirmed ? <FaCheck color="green" /> : <FaTimes color="red" />}
+          {confirmationMessage && <p>{confirmationMessage}</p>}
+        </label>
       </div>
     </>
   );
