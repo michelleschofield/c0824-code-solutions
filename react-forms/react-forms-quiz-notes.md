@@ -5,7 +5,7 @@
 Answer the following questions in the provided markdown file before turning in this exercise:
 
 - How do controlled components differ from uncontrolled components?
-  you controlled their value with state and allow the user to updated with events
+  you control their value with state and allow the user to updated with events, uncontrolled is managed by dom
 - What are some advantages of using uncontrolled components?
 
 - What are some advantages of using controlled components?
