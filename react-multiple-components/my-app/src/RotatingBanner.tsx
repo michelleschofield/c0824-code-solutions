@@ -1,6 +1,6 @@
 import { Indicators } from './Indicators';
 import { Button } from './Button';
-import { H2 } from './H2';
+import { Header } from './Header';
 import { useState } from 'react';
 
 type Props = {
@@ -27,7 +27,7 @@ export function RotatingBanner({ items }: Props) {
 
   return (
     <>
-      <H2 label={items[currentIndex]} />
+      <Header label={items[currentIndex]} />
       <Button onClick={handlePrevious} label="Previous" />
       <Indicators
         onClick={handleIndicatorClick}

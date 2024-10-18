@@ -2,6 +2,6 @@ type Props = {
   label: string;
 };
 
-export function H2({ label }: Props) {
+export function Header({ label }: Props) {
   return <h2>{label}</h2>;
 }
