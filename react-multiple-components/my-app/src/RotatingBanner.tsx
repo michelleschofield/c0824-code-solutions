@@ -1,18 +1,21 @@
-import { NumberButtons } from './NumberButtons';
+import { Indicators } from './Indicators';
+import { Button } from './Button';
+import { H2 } from './H2';
+import { useState } from 'react';
 
 type Props = {
   items: string[];
 };
 
 export function RotatingBanner({ items }: Props) {
-  const current = 3;
+  const [currentIndex /* setCurrentIndex */] = useState(5);
 
   return (
     <div>
-      <h2>{items[current]}</h2>
-      <button>Previous</button>
-      <NumberButtons items={items} current={current} />
-      <button>Next</button>
+      <H2 label={items[currentIndex]} />
+      <Button label="next" className="" />
+      <Indicators items={items} current={currentIndex} />
+      <Button label="previous" />
     </div>
   );
 }
