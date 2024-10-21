@@ -1,0 +1,28 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+h3 {
+  margin: 0;
+}
+
+.topic-header {
+  background-color: lightgray;
+  border: 2px solid black;
+  color: black;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.topic-content {
+  background-color: white;
+  border: 2px solid black;
+  color: black;
+  padding: 0.25rem;
+}
+
+.accordion {
+  width: 25rem;
+}
