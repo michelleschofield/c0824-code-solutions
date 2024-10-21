@@ -14,14 +14,21 @@ type Props = {
 export function Accordion({ topics }: Props) {
   const [selected, setSelected] = useState<number>();
 
+  function handleClick(id: number) {
+    if (id === selected) {
+      setSelected(undefined);
+    } else {
+      setSelected(id);
+    }
+  }
+
   return (
     <div className="accordion">
       {topics.map((topic) => (
         <TopicCard
           active={topic.id === selected}
           topic={topic}
-          onSelected={(id) => setSelected(id)}
-          onClosed={() => setSelected(undefined)}
+          onClick={handleClick}
           key={topic.id}
         />
       ))}

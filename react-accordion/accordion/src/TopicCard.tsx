@@ -7,22 +7,13 @@ type Topic = {
 type Props = {
   topic: Topic;
   active: boolean;
-  onSelected: (id: number) => void;
-  onClosed: () => void;
+  onClick: (id: number) => void;
 };
 
-export function TopicCard({ topic, active, onSelected, onClosed }: Props) {
-  function handleClick() {
-    if (active) {
-      onClosed();
-    } else {
-      onSelected(topic.id);
-    }
-  }
-
+export function TopicCard({ topic, active, onClick }: Props) {
   return (
     <>
-      <div onClick={handleClick} className="topic-header">
+      <div onClick={() => onClick(topic.id)} className="topic-header">
         <h3>{topic.title}</h3>
       </div>
       {active && (
