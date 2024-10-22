@@ -1,0 +1,45 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+img {
+  width: 100%;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+button.arrow-button {
+  width: 2rem;
+  height: 2rem;
+  background-color: rgb(19, 19, 19);
+}
+
+button.dot {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: transparent;
+}
+
+.image-wrapper {
+  width: 20rem;
+  height: 30rem;
+}
