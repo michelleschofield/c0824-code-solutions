@@ -18,8 +18,8 @@ export function Carousel({ images }: Props) {
   const length = images.length;
 
   const incrementCarousel = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % length);
-  }, [length]);
+    setCurrentIndex((currentIndex + 1) % length);
+  }, [length, currentIndex]);
 
   function decrementCarousel() {
     setCurrentIndex((prev) => (prev - 1 + length) % length);
@@ -28,7 +28,7 @@ export function Carousel({ images }: Props) {
   useEffect(() => {
     const intervalId = setTimeout(incrementCarousel, 3000);
     return () => clearTimeout(intervalId);
-  }, [currentIndex, incrementCarousel]);
+  }, [incrementCarousel]);
 
   return (
     <>
