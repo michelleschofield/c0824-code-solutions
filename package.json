@@ -26,6 +26,7 @@
     "stylelint": "^15.4.0",
     "stylelint-config-recommended": "^11.0.0",
     "stylelint-config-standard": "^32.0.0",
+    "tailwindcss": "^3.4.14",
     "typescript": "^5.2.2"
   }
 }
