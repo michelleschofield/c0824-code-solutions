@@ -4,7 +4,7 @@ function uniqueLinear(words) {
   const seen = {}; // 1 * 1 = O(1)
   const unique = []; // 1 * 1 = O(1)
   for (
-    let i = 0; // 1 * 1 = O(n)
+    let i = 0; // 1 * 1 = O(1)
     i < words.length; // 2 * n = O(n)
     i++ // 2 * n = O(n)
   ) {
