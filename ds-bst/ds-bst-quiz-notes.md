@@ -11,8 +11,9 @@ Answer the following questions in the provided markdown file before turning in t
 - How do you determine if an element is in a Binary Search Tree? What is its time complexity?
   recursively compare the stuff and it's log n
 - How do you add an element into a Binary Search Tree? What is its time complexity?
-
+  log n
 - How do you remove an element from a Binary Search Tree? What is its time complexity?
+  log n
 
 ## Notes
 
