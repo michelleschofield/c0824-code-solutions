@@ -25,7 +25,7 @@ export function Details() {
     if (productId) {
       loadProduct(+productId);
     }
-  }, []);
+  }, [productId]);
 
   if (isLoading) {
     return <div>Loading...</div>;
