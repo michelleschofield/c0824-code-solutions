@@ -6,7 +6,7 @@ type Props = {
   isOpen: boolean;
 };
 
-export function MenuItem({ menuItem, isOpen }: Props) {
+export function MenuItemDisplay({ menuItem, isOpen }: Props) {
   const { name, path, iconUrl } = menuItem;
   return (
     <li className="inline-block py-2 w-full ">

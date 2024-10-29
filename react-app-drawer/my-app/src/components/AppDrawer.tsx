@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa';
 import { useState } from 'react';
-import { MenuItem } from './MenuItem';
+import { MenuItemDisplay } from './MenuItemDisplay';
 
 export type MenuItem = {
   name: string;
@@ -31,7 +31,7 @@ export function AppDrawer({ menuItems, heading }: Props) {
         {isOpen && <h2 className="text-2xl">{heading}</h2>}
         <ul>
           {menuItems.map((menu) => (
-            <MenuItem key={menu.name} menuItem={menu} isOpen={isOpen} />
+            <MenuItemDisplay key={menu.name} menuItem={menu} isOpen={isOpen} />
           ))}
         </ul>
       </nav>
