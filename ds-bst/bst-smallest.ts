@@ -4,9 +4,17 @@ import { BinarySearchTree, TreeNode } from './lib/bst';
  * Returns the smallest value in the BST, or `Infinity` if the tree is empty.
  */
 export function smallest(bst: BinarySearchTree): number {
-  return 0;
+  return smallestRecursive(bst.root);
 }
 
 function smallestRecursive(node: TreeNode | undefined): number {
-  return 0;
+  if (!node) {
+    return Infinity;
+  }
+
+  if (!node.left) {
+    return node.value;
+  }
+
+  return smallestRecursive(node.left);
 }
