@@ -5,6 +5,7 @@ import { Product, readCatalog } from './lib';
 export function Catalog() {
   const [products, setProducts] = useState<Product[]>();
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<unknown>();
 
   useEffect(() => {
     async function getProducts() {
@@ -13,16 +14,21 @@ export function Catalog() {
         setProducts(products);
       } catch (err) {
         console.log(err);
+        setError(err);
       } finally {
         setIsLoading(false);
       }
     }
 
     getProducts();
-  });
+  }, []);
 
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{`${error}`}</div>;
   }
 
   return (

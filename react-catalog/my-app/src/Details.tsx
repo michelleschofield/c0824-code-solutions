@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 export function Details() {
   const [product, setProduct] = useState<Product>();
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<unknown>();
   const navigate = useNavigate();
 
   const { productId } = useParams();
@@ -16,6 +17,7 @@ export function Details() {
         setProduct(product);
       } catch (err) {
         console.log(err);
+        setError(err);
       } finally {
         setIsLoading(false);
       }
@@ -31,6 +33,10 @@ export function Details() {
 
   if (!product) {
     return <div>Error loading product {productId}</div>;
+  }
+
+  if (error) {
+    return <div>{`${error}`}</div>;
   }
 
   function handleAddToCart(): void {
