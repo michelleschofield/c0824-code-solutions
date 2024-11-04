@@ -53,9 +53,7 @@ app.post('/api/grades', async (req, res, next) => {
     if (!name) throw new ClientError(400, 'name is required');
     if (!course) throw new ClientError(400, 'course is required');
     if (!score) throw new ClientError(400, 'score is required');
-    if (!isValidScore(score)) {
-      throw new ClientError(400, `${score} is not a valid score`);
-    }
+    validateScore(score);
 
     const sql = `
       insert into "grades" ("name", "course", "score")
@@ -80,9 +78,7 @@ app.put('/api/grades/:gradeId', async (req, res, next) => {
     if (!name) throw new ClientError(400, 'name is required');
     if (!course) throw new ClientError(400, 'course is required');
     if (!score) throw new ClientError(400, 'score is required');
-    if (!isValidScore(score)) {
-      throw new ClientError(400, `${score} is not a valid score`);
-    }
+    validateScore(score);
 
     const sql = `
       update "grades"
@@ -132,11 +128,11 @@ app.listen(8080, () => {
   console.log('listening on port 8080');
 });
 
-function isValidScore(score: unknown): boolean {
-  if (typeof score !== 'number') return false;
-  if (!Number.isInteger(score)) return false;
-  if (score < 0) return false;
-  if (score > 100) return false;
+function validateScore(score: unknown): boolean {
+  if (!Number.isInteger(score) || typeof score !== 'number')
+    throw new ClientError(400, `${score} is not an integer`);
+  if (score < 0 || score > 100)
+    throw new ClientError(400, `${score} is not a valid score`);
 
   return true;
 }
