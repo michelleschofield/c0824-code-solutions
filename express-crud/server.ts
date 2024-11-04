@@ -47,8 +47,40 @@ app.get('/api/grades/:gradeId', async (req, res, next) => {
   }
 });
 
+app.post('/api/grades', async (req, res, next) => {
+  try {
+    const { name, course, score } = req.body;
+    if (!name) throw new ClientError(400, 'name is required');
+    if (!course) throw new ClientError(400, 'course is required');
+    if (!score) throw new ClientError(400, 'score is required');
+    if (!isValidScore(score)) {
+      throw new ClientError(400, `${score} is not a valid score`);
+    }
+
+    const sql = `
+      insert into "grades" ("name", "course", "score")
+      values ($1, $2, $3)
+      returning *;
+    `;
+
+    const result = await db.query(sql, [name, course, score]);
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.use(errorMiddleware);
 
 app.listen(8080, () => {
   console.log('listening on port 8080');
 });
+
+function isValidScore(score: unknown): boolean {
+  if (typeof score !== 'number') return false;
+  if (!Number.isInteger(score)) return false;
+  if (score < 0) return false;
+  if (score > 100) return false;
+
+  return true;
+}
