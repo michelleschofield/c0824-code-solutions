@@ -102,6 +102,30 @@ app.put('/api/grades/:gradeId', async (req, res, next) => {
   }
 });
 
+app.delete('/api/grades/:gradeId', async (req, res, next) => {
+  try {
+    const { gradeId } = req.params;
+    if (!Number.isInteger(+gradeId)) {
+      throw new ClientError(400, `${gradeId} is not an integer`);
+    }
+    const sql = `
+      delete
+      from "grades"
+      where "gradeId" = $1
+      returning *;
+    `;
+
+    const result = await db.query(sql, [gradeId]);
+    if (!result.rows[0]) {
+      throw new ClientError(404, `grade ${gradeId} not found`);
+    }
+
+    res.sendStatus(204);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.use(errorMiddleware);
 
 app.listen(8080, () => {
