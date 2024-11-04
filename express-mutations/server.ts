@@ -49,7 +49,6 @@ app.post('/api/actors', async (req, res, next) => {
 
     const result = await db.query(sql, [firstName, lastName]);
     const actor = result.rows[0];
-    if (!actor) throw new ClientError(404, 'actor not added');
     res.status(201).json(actor);
   } catch (err) {
     next(err);
@@ -97,7 +96,7 @@ app.delete('/api/actors/:actorId', async (req, res, next) => {
     const result = await db.query(sql, [actorId]);
     const actor = result.rows[0];
     if (!actor) throw new ClientError(404, `actor ${actorId} not found`);
-    res.status(204).json(actor);
+    res.sendStatus(204);
   } catch (err) {
     next(err);
   }
