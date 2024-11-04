@@ -70,6 +70,38 @@ app.post('/api/grades', async (req, res, next) => {
   }
 });
 
+app.put('/api/grades/:gradeId', async (req, res, next) => {
+  try {
+    const { name, course, score } = req.body;
+    const { gradeId } = req.params;
+    if (!Number.isInteger(+gradeId)) {
+      throw new ClientError(400, `${gradeId} is not an integer`);
+    }
+    if (!name) throw new ClientError(400, 'name is required');
+    if (!course) throw new ClientError(400, 'course is required');
+    if (!score) throw new ClientError(400, 'score is required');
+    if (!isValidScore(score)) {
+      throw new ClientError(400, `${score} is not a valid score`);
+    }
+
+    const sql = `
+      update "grades"
+      set "name" = $1,
+          "course" = $2,
+          "score" = $3
+      where "gradeId" = $4
+      returning *;
+    `;
+
+    const result = await db.query(sql, [name, course, score, gradeId]);
+    const updated = result.rows[0];
+    if (!updated) throw new ClientError(404, `grade ${gradeId} not found`);
+    res.status(200).json(updated);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.use(errorMiddleware);
 
 app.listen(8080, () => {
