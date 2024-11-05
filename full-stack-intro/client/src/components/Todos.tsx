@@ -67,9 +67,9 @@ export function Todos() {
       if (!response.ok)
         throw new Error(`fetch error, status: ${response.status}`);
       const newTodo = (await response.json()) as Todo;
-      const newTodos = todos.map((todo) => {
-        return todo.todoId === newTodo.todoId ? newTodo : todo;
-      });
+      const newTodos = todos.map((todo) =>
+        todo.todoId === newTodo.todoId ? newTodo : todo
+      );
       setTodos(newTodos);
     } catch (err) {
       setError(err);
