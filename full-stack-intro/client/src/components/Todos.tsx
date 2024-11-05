@@ -43,21 +43,38 @@ export function Todos() {
         },
         body: JSON.stringify(newTodo),
       });
-      const formattedResponse = await response.json();
       if (!response.ok) {
-        throw new Error(
-          `fetch err, status: ${response.status} ${formattedResponse.error}`
-        );
+        throw new Error(`fetch err, status: ${response.status}`);
       }
-      setTodos([...todos, formattedResponse]);
+      const todo = await response.json();
+      setTodos([...todos, todo]);
     } catch (err) {
       setError(err);
     }
   }
 
   /* Implement toggleCompleted to toggle the completed state of a todo. Hints are at the bottom of the file. */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async function toggleCompleted(todo: Todo) {}
+  async function toggleCompleted(todo: Todo) {
+    try {
+      const { task, isCompleted, todoId } = todo;
+      const response = await fetch(`/api/todos/${todoId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ task, isCompleted: !isCompleted }),
+      });
+      if (!response.ok)
+        throw new Error(`fetch error, status: ${response.status}`);
+      const newTodo = (await response.json()) as Todo;
+      const newTodos = todos.map((todo) => {
+        return todo.todoId === newTodo.todoId ? newTodo : todo;
+      });
+      setTodos(newTodos);
+    } catch (err) {
+      setError(err);
+    }
+  }
 
   if (isLoading) {
     return <div>Loading...</div>;
