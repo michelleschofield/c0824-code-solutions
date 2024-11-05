@@ -72,7 +72,8 @@ export function Todos() {
       );
       setTodos(newTodos);
     } catch (err) {
-      setError(err);
+      console.error(err);
+      alert(err);
     }
   }
 
