@@ -40,14 +40,12 @@ app.post('/api/auth/sign-up', async (req, res, next) => {
     const sql = `
       insert into "users" ("username", "hashedPassword")
       values ($1, $2)
-      returning *;
+      returning "userId", "username";
     `;
 
     const result = await db.query(sql, [username, hashedPassword]);
 
-    const { userId, createdAt } = result.rows[0];
-
-    res.status(201).json({ userId, createdAt, username });
+    res.status(201).json(result.rows[0]);
     /* TODO:
      * Delete the "Not implemented" error.
      * Hash the user's password with `argon2.hash()`
