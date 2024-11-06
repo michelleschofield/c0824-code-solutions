@@ -46,15 +46,6 @@ app.post('/api/auth/sign-up', async (req, res, next) => {
     const result = await db.query(sql, [username, hashedPassword]);
 
     res.status(201).json(result.rows[0]);
-    /* TODO:
-     * Delete the "Not implemented" error.
-     * Hash the user's password with `argon2.hash()`
-     * Insert the user's "username" and "hashedPassword" into the "users" table.
-     * Respond to the client with a 201 status code and the new user's "userId", "username", and "createdAt" timestamp.
-     * Catch any errors.
-     *
-     * Hint: Insert statements can include a `returning` clause to retrieve the inserted row(s).
-     */
   } catch (err) {
     next(err);
   }
@@ -66,7 +57,23 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
     if (!username || !password) {
       throw new ClientError(401, 'invalid login');
     }
-    throw new Error('Not implemented');
+
+    const sql = `
+      select "userId", "hashedPassword"
+      from "users"
+      where "username" = $1
+    `;
+
+    const result = await db.query(sql, [username]);
+    const user = result.rows[0];
+    if (!user) throw new ClientError(401, 'invalid login');
+
+    const verified = await argon2.verify(user.hashedPassword, password);
+    if (!verified) throw new ClientError(401, 'invalid login');
+
+    const payload = { userId: user.userId, username };
+    const token = jwt.sign(payload, hashKey);
+    res.status(200).json({ user: payload, token });
     /* TODO:
      * Delete the "Not implemented" error.
      * Query the database to find the "userId" and "hashedPassword" for the "username".
