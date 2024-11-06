@@ -5,7 +5,7 @@ type Props = {
   product: Product;
 };
 
-function toDollars(value: number): string {
+export function toDollars(value: number): string {
   return '$' + (value / 100).toFixed(2);
 }
 
