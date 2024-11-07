@@ -74,28 +74,12 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
     const payload = { userId: user.userId, username };
     const token = jwt.sign(payload, hashKey);
     res.status(200).json({ user: payload, token });
-    /* TODO:
-     * Delete the "Not implemented" error.
-     * Query the database to find the "userId" and "hashedPassword" for the "username".
-     * If no user is found,
-     *   throw a 401: 'invalid login' error.
-     * If a user is found,
-     *   confirm that the password included in the request body matches the "hashedPassword" with `argon2.verify()`
-     *   If the password does not match,
-     *     throw a 401: 'invalid login' error.
-     *   If the password does match,
-     *     Create a payload object containing the user's "userId" and "username".
-     *     Create a new signed token with `jwt.sign()`, using the payload and your TOKEN_SECRET
-     *       (see `hashKey` above).
-     *     Send the client a 200 response containing an object with 2 keys, "user" and "token",
-     *       where "user"'s value is the payload and "token"'s value is the token.
-     */
   } catch (err) {
     next(err);
   }
 });
 
-app.get('/api/todos', async (req, res, next) => {
+app.get('/api/todos', authMiddleware, async (req, res, next) => {
   try {
     const sql = `
       select *
@@ -110,7 +94,7 @@ app.get('/api/todos', async (req, res, next) => {
   }
 });
 
-app.post('/api/todos', async (req, res, next) => {
+app.post('/api/todos', authMiddleware, async (req, res, next) => {
   try {
     const { task, isCompleted = false } = req.body;
     if (!task || typeof isCompleted !== 'boolean') {
@@ -130,7 +114,7 @@ app.post('/api/todos', async (req, res, next) => {
   }
 });
 
-app.put('/api/todos/:todoId', async (req, res, next) => {
+app.put('/api/todos/:todoId', authMiddleware, async (req, res, next) => {
   try {
     const todoId = Number(req.params.todoId);
     if (!Number.isInteger(todoId) || todoId < 1) {

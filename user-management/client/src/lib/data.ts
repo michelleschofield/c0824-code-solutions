@@ -37,7 +37,11 @@ export type Todo = UnsavedTodo & {
 };
 
 export async function readTodos(): Promise<Todo[]> {
-  const res = await fetch('/api/todos');
+  const res = await fetch('/api/todos', {
+    headers: {
+      Authorization: `Bearer ${readToken()}`,
+    },
+  });
   if (!res.ok) throw new Error(`fetch Error ${res.status}`);
   return (await res.json()) as Todo[];
 }
@@ -47,6 +51,7 @@ export async function insertTodo(todo: UnsavedTodo): Promise<Todo> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
     },
     body: JSON.stringify(todo),
   };
@@ -60,6 +65,7 @@ export async function updateTodo(todo: Todo): Promise<Todo> {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
     },
     body: JSON.stringify(todo),
   };
